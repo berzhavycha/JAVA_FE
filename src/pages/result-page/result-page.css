@@ -1,0 +1,132 @@
+/* results-page.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+
+.results-container {
+  position: relative;
+  min-height: 100vh;
+  background-color: #8B5E5E;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+.background-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: #9B6E6E;
+  font-size: 200px;
+  font-weight: 300;
+  opacity: 0.2;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.results-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 500px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.results-heading {
+  color: #FFFFFF;
+  font-size: 36px;
+  font-weight: 300;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.results-card {
+  background-color: #FAF3E8;
+  border-radius: 8px;
+  padding: 32px;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.result-item {
+  margin-bottom: 24px;
+}
+
+.result-item:last-child {
+  margin-bottom: 0;
+}
+
+.result-label {
+  color: #FF6B6B;
+  font-size: 20px;
+  margin-bottom: 8px;
+  font-weight: normal;
+}
+
+.result-value {
+  color: #FF6B6B;
+  font-size: 24px;
+  margin: 0;
+  word-break: break-all;
+}
+
+.return-button {
+  margin-top: 32px;
+  width: 100%;
+  padding: 16px;
+  background-color: #FAF3E8;
+  color: #FF6B6B;
+  border: none;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.return-button:hover {
+  background-color: #F5E6D3;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .background-text {
+    font-size: 120px;
+  }
+
+  .results-content {
+    padding: 0 16px;
+  }
+
+  .results-heading {
+    font-size: 28px;
+  }
+
+  .results-card {
+    padding: 24px;
+  }
+
+  .result-label {
+    font-size: 18px;
+  }
+
+  .result-value {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .background-text {
+    font-size: 80px;
+  }
+
+  .results-card {
+    padding: 16px;
+  }
+}
