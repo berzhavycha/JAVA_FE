@@ -12,12 +12,6 @@ export const IntroPage: FC = () => {
             <div className="background-pattern">
                 <div className="background-text">TOKYO-KYIV BEIJING-SHANGHAI</div>
                 <div className="background-text">PARIS-BERLIN KYIV-LVIV</div>
-                <div className="background-text">TOKYO-KYIV BEIJING-SHANGHAI</div>
-                <div className="background-text">PARIS-BERLIN KYIV-LVIV</div>
-                <div className="background-text">TOKYO-KYIV BEIJING-SHANGHAI</div>
-                <div className="background-text">PARIS-BERLIN KYIV-LVIV</div>
-                <div className="background-text">TOKYO-KYIV BEIJING-SHANGHAI</div>
-                <div className="background-text">PARIS-BERLIN KYIV-LVIV</div>
             </div>
 
             <div className="content">
