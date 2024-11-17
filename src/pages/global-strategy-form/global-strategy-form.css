@@ -1,0 +1,196 @@
+.settings-container {
+    min-height: 100vh;
+    background-color: #8B4545;
+    padding: 2rem;
+    position: relative;
+}
+
+.back-button {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.back-icon {
+    fill: #F5F5DC;
+}
+
+.setting-group-inner {
+    display: flex;
+    gap: 50px;
+}
+
+.setting-group-item {
+    width: 48%;
+}
+
+.settings-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 3rem;
+}
+
+.settings-left {
+    flex: 1;
+    padding-right: 4rem;
+}
+
+.setting-group {
+    margin-bottom: 2rem;
+}
+
+.setting-label {
+    color: #F5F5DC;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.setting-input {
+    background-color: transparent;
+    border: 1px solid #F5F5DC;
+    border-radius: 25px;
+    color: #F5F5DC;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.map-size-inputs {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.multiply {
+    color: #F5F5DC;
+    font-size: 1.5rem;
+}
+
+.setting-group-max-number-clients {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-time-inputs {
+    display: flex;
+    gap: 2rem;
+}
+
+.time-label {
+    color: #F5F5DC;
+    font-size: 0.8rem;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.settings-right {
+    text-align: center;
+    padding-left: 4rem;
+    position: relative;
+}
+
+.settings-right::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -3rem;
+    bottom: -3rem;
+    width: 300px;
+    background: #663A35;
+    z-index: 0;
+}
+
+.title-section {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 4rem;
+}
+
+.icon-container {
+    background-color: #7BC5D2;
+    padding: 1rem;
+    border-radius: 8px;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.ticket-icon {
+    fill: white;
+}
+
+.title {
+    color: #F5F5DC;
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.subtitle {
+    color: #F5F5DC;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 0 0;
+}
+
+.strategy-section {
+    position: relative;
+    z-index: 1;
+    margin: 4rem 0;
+}
+
+.strategy-title {
+    color: #F5F5DC;
+    font-size: 3rem;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1;
+}
+
+.strategy-title.accent {
+    color: #CB6D6D;
+}
+
+.save-button {
+    background-color: #F5F5DC;
+    color: #8B4545;
+    border: none;
+    border-radius: 25px;
+    padding: 0.75rem 3rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+    z-index: 1;
+}
+
+.save-button:hover {
+    background-color: #E5E5CC;
+}
+
+@media (max-width: 768px) {
+    .settings-content {
+        flex-direction: column;
+    }
+
+    .settings-left {
+        padding-right: 0;
+        margin-bottom: 3rem;
+    }
+
+    .settings-right {
+        padding-left: 0;
+    }
+
+    .settings-right::before {
+        display: none;
+    }
+}

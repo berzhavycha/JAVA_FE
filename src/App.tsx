@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { IntroPage } from "./pages/intro-page";
-import { GlobalStrategyForm } from "./pages/global-strategy-form";
+import { IntroPage } from "./pages/intro-page/intro-page";
+import { GlobalStrategyForm } from "./pages/global-strategy-form/global-strategy-form";
 import GlobalStrategy from "./pages/choose-strategy-page";
 
 function App() {

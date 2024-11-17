@@ -1,5 +1,5 @@
 import { FC } from "react";
-import TicketImage from '../assets/train-ticket.png'
+import TicketImage from '../../assets/train-ticket.png'
 
 export const IntroPage: FC = () => {
     const handleStart = () => {
