@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './choose-strategy-page.css'
 
 type Strategy = {
   id: number;
