@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { IntroPage } from "./pages/intro-page";
 import { GlobalStrategyForm } from "./pages/global-strategy-form";
+import GlobalStrategy from "./pages/choose-strategy-page";
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<IntroPage />} />
         <Route path="/global-strategy-form" element={<GlobalStrategyForm />} />
+        <Route path="/choose-strategy-page" element={<GlobalStrategy/>} />
       </Routes>
     </Router>
   );
