@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 type Strategy = {
   id: number;
   title: string;
@@ -25,25 +26,22 @@ const GlobalStrategy: React.FC = () => {
   };
 
   return (
-    <div className='gloval-strategy-body'>
-      <div className="global-strategy-container">
-      <div className="back-button">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          onClick={() => alert('Go back!')}
-        >
-          <path d="M19 12H5" />
-          <path d="M12 19l-7-7 7-7" />
-        </svg>
+    <div className="gloval-strategy-body">
+    <div className="global-strategy-container">
+      <div className="half-circle">
+        <div className="circle-content">
+          <h1 className="title">TICKETS SIMULATOR</h1>
+          <p className="subtitle">SETTINGS</p>
+          <h2 className="global-title">
+            GLOBAL <span className="strategy-highlight">STRATEGY</span>
+          </h2>
+        </div>
+        <button className="save-button" onClick={handleSave}>
+          SAVE
+        </button>
       </div>
 
-      <div className="strategies-row">
+      <div className="strategies">
         {strategies.map((strategy) => (
           <div
             key={strategy.id}
@@ -58,21 +56,8 @@ const GlobalStrategy: React.FC = () => {
           </div>
         ))}
       </div>
-
-      <div className="half-circle">
-        <div className="circle-content">
-          <h1 className="title">TICKETS SIMULATOR</h1>
-          <p className="subtitle">SETTINGS</p>
-          <h2 className="global-title">
-            GLOBAL <span className="strategy-highlight">STRATEGY</span>
-          </h2>
-        </div>
-        <button className="save-button" onClick={handleSave}>
-          SAVE
-        </button>
-      </div>
     </div>
-    </div>
+  </div>
   );
 };
 
