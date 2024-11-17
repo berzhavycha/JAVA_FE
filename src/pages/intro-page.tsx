@@ -1,8 +1,5 @@
 import { FC } from "react";
-
-const TicketIcon = () => (
-    <img src="../assets/train-ticket.png"  alt="" />
-);
+import TicketImage from '../assets/train-ticket.png'
 
 export const IntroPage: FC = () => {
     const handleStart = () => {
@@ -26,7 +23,7 @@ export const IntroPage: FC = () => {
             <div className="content">
                 <h1 className="title">Tickets Simulator</h1>
                 <div className="icon-container">
-                    <TicketIcon />
+                    <img src={TicketImage} />
                 </div>
                 <button className="start-button" onClick={handleStart}>
                     START

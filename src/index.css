@@ -41,6 +41,8 @@
   position: relative;
   z-index: 1;
   text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
@@ -50,14 +52,17 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   margin-bottom: 1.5rem;
+  position: relative;
 }
 
-.icon-container {
-  background-color: #7BC5D2;
-  padding: 1rem;
-  border-radius: 8px;
-  display: inline-block;
-  margin-bottom: 1.5rem;
+.title::after {
+  content: '';
+  width: 100%;
+  top: 110%;
+  left: 0;
+  position: absolute;
+  height: 2px;
+  background-color: white;
 }
 
 .ticket-icon {
@@ -67,8 +72,8 @@
 .start-button {
   background-color: #F5F5DC;
   color: #8B4545;
-  padding: 0.75rem 3rem;
-  font-size: 1.25rem;
+  padding: 5px 3rem;
+  font-size: 48px;
   font-weight: 500;
   border: none;
   border-radius: 9999px;
