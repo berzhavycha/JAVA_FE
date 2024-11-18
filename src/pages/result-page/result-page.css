@@ -1,20 +1,17 @@
-/* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
 
-/* Main container */
-.results-container {
-    position: relative;
-    min-height: 100vh;
-    background-color: #8B5E5E;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Inter', sans-serif;
-    overflow: hidden;
+.resultsPage-container {
+  min-height: 100vh;
+  background-color: #8B4545;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Background pattern */
-.background-pattern {
+.resultsPage-background-pattern {
     position: absolute;
     top: 0;
     left: 0;
@@ -28,8 +25,8 @@
     pointer-events: none;
 }
 
-.background-text {
-    font-size: 120px; 
+.resultsPage-background-text {
+    font-size: 120px;
     color: rgb(255, 255, 255);
     font-weight: 300;
     white-space: nowrap;
@@ -37,7 +34,7 @@
     text-align: center;
 }
 
-.results-content {
+.resultsPage-content {
     position: relative;
     z-index: 2;
     width: 100%;
@@ -48,7 +45,7 @@
     align-items: center;
 }
 
-.results-heading {
+.resultsPage-heading {
     color: #FFFFFF;
     font-size: 36px;
     font-weight: 400;
@@ -57,15 +54,15 @@
     position: relative;
 }
 
-.results-heading .underline {
+.resultsPage-heading .resultsPage-underline {
     display: block;
-    width: 250%; 
+    width: 250%;
     height: 2px;
     background-color: #FFFFFF;
     margin-left: -75%;
 }
 
-.results-card {
+.resultsPage-card {
     background-color: #FAF3E8;
     border-radius: 8px;
     padding: 32px;
@@ -73,29 +70,29 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-.result-item {
+.resultsPage-item {
     margin-bottom: 24px;
 }
 
-.result-item:last-child {
+.resultsPage-item:last-child {
     margin-bottom: 0;
 }
 
-.result-label {
+.resultsPage-label {
     color: #FF6B6B;
     font-size: 20px;
     margin-bottom: 8px;
     font-weight: 400;
 }
 
-.result-value {
+.resultsPage-value {
     color: #FF6B6B;
     font-size: 24px;
     margin: 0;
     word-break: break-all;
 }
 
-.return-button {
+.resultsPage-button {
     margin-top: 32px;
     width: 100%;
     padding: 16px;
@@ -108,33 +105,33 @@
     transition: background-color 0.2s ease;
 }
 
-.return-button:hover {
+.resultsPage-button:hover {
     background-color: #F5E6D3;
 }
 
 @media (max-width: 768px) {
-    .background-text {
+    .resultsPage-background-text {
         font-size: 100px;
     }
-    .results-heading {
+    .resultsPage-heading {
         font-size: 28px;
     }
-    .results-card {
+    .resultsPage-card {
         padding: 24px;
     }
-    .result-label {
+    .resultsPage-label {
         font-size: 18px;
     }
-    .result-value {
+    .resultsPage-value {
         font-size: 20px;
     }
 }
 
 @media (max-width: 480px) {
-    .background-text {
+    .resultsPage-background-text {
         font-size: 80px;
     }
-    .results-card {
+    .resultsPage-card {
         padding: 16px;
     }
 }
