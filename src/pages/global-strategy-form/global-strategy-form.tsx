@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './global-strategy-form.css'
 import TicketImage from '../../assets/train-ticket.png'
+import Image4 from '../../assets/train-ticket.png'
 
 const BackIcon = () => (
     <svg viewBox="0 0 24 24" width="32" height="32" className="back-icon">
@@ -130,6 +131,7 @@ export const GlobalStrategyForm: React.FC = () => {
 
                  <div className="glb-half-circle">
                      <div className="circle-content">
+                     <img className='choose-title' src={Image4}/>
                         <h1 className="choose-title">TICKETS SIMULATOR</h1>
                          <p className="csp-subtitle">SETTINGS</p>
                           <h2 className="csp-global-title">

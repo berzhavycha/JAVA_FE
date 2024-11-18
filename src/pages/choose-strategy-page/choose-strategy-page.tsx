@@ -3,6 +3,7 @@ import './choose-strategy-page.css';
 import Image1 from '../../assets/Strategy1.jpg'
 import Image2 from '../../assets/Strategy2.jpg'
 import Image3 from '../../assets/Strategy3.jpg'
+import Image4 from '../../assets/train-ticket.png'
 type Strategy = {
   id: number;
   title: string;
@@ -65,7 +66,9 @@ const GlobalStrategy: React.FC = () => {
         </div>
 
         <div className="half-circle">
+        
           <div className="circle-content">
+          <img className='choose-title' src={Image4}/>
             <h1 className="choose-title">TICKETS SIMULATOR</h1>
             <p className="csp-subtitle">SETTINGS</p>
             <h2 className="csp-global-title">

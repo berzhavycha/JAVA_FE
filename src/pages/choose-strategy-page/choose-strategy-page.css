@@ -2,7 +2,7 @@
     
     margin: 0;
     padding: 0;
-    background-color: #8C5A5A;
+    background-color: #8B4545;
     color: #FFF7E8;
     cursor: default;
     user-select: none; /* Забороняємо виділення тексту */
@@ -126,7 +126,6 @@
 }
 
 .choose-title {
-    margin-top: 150px;
     margin-left: 200px;
     font-size: 24px; /* Немного уменьшили заголовок */
     margin-bottom: 10px;
