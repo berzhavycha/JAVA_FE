@@ -66,7 +66,7 @@ const GlobalStrategy: React.FC = () => {
 
         <div className="half-circle">
           <div className="circle-content">
-            <h1 className="title">TICKETS SIMULATOR</h1>
+            <h1 className="choose-title">TICKETS SIMULATOR</h1>
             <p className="subtitle">SETTINGS</p>
             <h2 className="global-title">
   GLOBAL <br />
