@@ -1,11 +1,13 @@
-import { FC } from "react";
+import { useNavigate } from 'react-router-dom';
+import { FC, } from "react";
 import TicketImage from '../../assets/train-ticket.png'
 import './intro-page.css'
 
 export const IntroPage: FC = () => {
+    const navigate = useNavigate();
+    
     const handleStart = () => {
-        console.log('Starting simulator...');
-        // Add your simulation logic here
+        navigate('/global-strategy-form');
     };
 
     return (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './global-strategy-form.css'
 import Image4 from '../../assets/train-ticket.png'
 
@@ -24,6 +25,8 @@ interface Settings {
 type FormErrors = Partial<Record<FieldName, string>>;
 
 export const GlobalStrategyForm: React.FC = () => {
+    const navigate = useNavigate();
+
     const [settings, setSettings] = useState({
         mapWidth: '20',          // Valid: between 5 and 100
         mapHeight: '30',         // Valid: between 5 and 100
@@ -143,13 +146,9 @@ export const GlobalStrategyForm: React.FC = () => {
         
         if (isValid) {
             try {
-                console.log('Saving settings:', settings);
-                // Add your save logic here
-                // await saveSettings(settings);
-                // Show success message or redirect
+                navigate('/choose-strategy-page');
             } catch (error) {
                 console.error('Error saving settings:', error);
-                // Handle error appropriately
             }
         } else {
             setErrors(formErrors);
