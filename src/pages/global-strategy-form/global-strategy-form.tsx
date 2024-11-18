@@ -128,23 +128,18 @@ export const GlobalStrategyForm: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="settings-right">
-                    <div className="title-section">
-                        <div>
-                            <img src={TicketImage} alt="" />
-                        </div>
-                        <h1 className="title">TICKETS SIMULATOR</h1>
-                        <p className="subtitle">SETTINGS</p>
+                 <div className="glb-half-circle">
+                     <div className="circle-content">
+                        <h1 className="choose-title">TICKETS SIMULATOR</h1>
+                         <p className="csp-subtitle">SETTINGS</p>
+                          <h2 className="csp-global-title">
+                            GLOBAL <br />
+                             <p className="strategy-highlight">STRATEGY</p>
+                         </h2>
                     </div>
-
-                    <div className="strategy-section">
-                        <h2 className="strategy-title">GLOBAL</h2>
-                        <h2 className="strategy-title accent">STRATEGY</h2>
-                    </div>
-
-                    <button className="save-button" onClick={handleSave}>
-                        SAVE
-                    </button>
+                <button className="csp-save-button" onClick={handleSave}>
+                   SAVE
+                 </button>
                 </div>
             </div>
         </div>

@@ -30,6 +30,7 @@
 }
 
 .settings-content {
+    padding-right: 600px;
     display: flex;
     justify-content: space-between;
     max-width: 1200px;
@@ -104,6 +105,23 @@
     position: relative;
 }
 
+.glb-half-circle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 50%; /* Увеличили ширину */
+    background-color: #5A2F2F;
+    border-top-left-radius: 7000%; /* Сохранили закругление */
+    border-bottom-left-radius: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Централизовали контент */
+    align-items: center;
+   
+    padding: 0; /* Убрали отступы */
+}
+
 .settings-right::before {
     content: '';
     position: absolute;
@@ -150,21 +168,24 @@
     position: relative;
     z-index: 1;
     margin: 4rem 0;
+    
 }
 
 .strategy-title {
     color: #F5F5DC;
-    font-size: 3rem;
+    font-size: 100px;
     font-weight: 500;
     margin: 0;
     line-height: 1;
 }
 
 .strategy-title.accent {
+    margin-top: 40px;
     color: #CB6D6D;
 }
 
 .save-button {
+
     background-color: #F5F5DC;
     color: #8B4545;
     border: none;
