@@ -9,3 +9,7 @@
   --text-color: #F5F5DC;
   --accent-color: #7BC5D2;
 }
+
+body {
+  overflow-x: hidden;
+}
