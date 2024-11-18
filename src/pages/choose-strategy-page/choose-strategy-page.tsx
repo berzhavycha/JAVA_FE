@@ -4,6 +4,8 @@ import Image1 from '../../assets/Strategy1.jpg'
 import Image2 from '../../assets/Strategy2.jpg'
 import Image3 from '../../assets/Strategy3.jpg'
 import Image4 from '../../assets/train-ticket.png'
+import { useNavigate } from 'react-router-dom';
+
 type Strategy = {
   id: number;
   title: string;
@@ -19,12 +21,17 @@ const strategies: Strategy[] = [
 ];
 
 const GlobalStrategy: React.FC = () => {
+  const navigate = useNavigate();
+
   const [selectedStrategy, setSelectedStrategy] = useState<number>(1);
 
   const handleChoose = (id: number) => {
     setSelectedStrategy(id);
   };
 
+  const handleBack= (id: number) => {
+    navigate("/global-strategy-form");
+  };
   const handleSave = () => {
     alert(`Strategy ${selectedStrategy} has been saved!`);
   };
@@ -41,7 +48,7 @@ const GlobalStrategy: React.FC = () => {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            onClick={() => alert('Go back!')}
+            onClick={handleBack}
           >
             <path d="M19 12H5" />
             <path d="M12 19l-7-7 7-7" />

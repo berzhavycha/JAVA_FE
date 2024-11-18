@@ -152,7 +152,6 @@ export const GlobalStrategyForm: React.FC = () => {
             }
         } else {
             setErrors(formErrors);
-            // Mark all fields as touched to show errors
             const allTouched: Record<FieldName, boolean> = {
                 mapWidth: true,
                 mapHeight: true,
@@ -168,7 +167,7 @@ export const GlobalStrategyForm: React.FC = () => {
     };
 
     const handleBack = () => {
-        console.log('Navigating back');
+        navigate("/");
     };
 
     const shouldShowError = (fieldName: FieldName): boolean => {
