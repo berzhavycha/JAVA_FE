@@ -220,3 +220,24 @@
         display: none;
     }
 }
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    position: absolute;
+}
+
+.setting-input.error {
+    border-color: #ff6b6b;
+}
+
+.csp-save-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
