@@ -4,9 +4,15 @@
     padding: 0;
     background-color: #8C5A5A;
     color: #FFF7E8;
+    cursor: default;
 }
+* {
+  
+    user-select: none; /* Забороняємо виділення тексту */
+  }
 
 .global-strategy-container {
+    cursor: default;
     display: flex;
     position: relative;
     height: 100vh;
@@ -48,41 +54,38 @@
 }
 
 .strategy-card {
-    background-color: #FFF7E8;
+    background-color: #F7F3DB;
     color: #8C5A5A;
     border-radius: 10px;
     padding: 20px;
-    width: 180px;
-    height: 250px;
+    width: 190px;
+    height: 320px;
     text-align: center;
     cursor: pointer;
     transition: transform 0.2s ease;
-}
-
-.choose-status {
-    font-size: 12px;
-    color: #8C5A5A;
-    margin-top: 5px;
-}
-
-.strategy-card:hover {
-    transform: scale(1.05);
-}
-
-.strategy-card.chosen {
-    border: 2px solid #59C474;
-}
-
-/* Новий стиль для кнопок вибору, які будуть під картками */
-.choose-buttons-row {
     display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 20px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.choose-button-container {
-    text-align: center;
+.strategy-title {
+    font-size: 18px;
+    color: #000; /* Завжди чорного кольору */
+    margin: 0;
+    padding: 0;
+}
+
+.strategy-image {
+    width: 100%;
+    max-height: 120px;
+    object-fit: cover;
+    margin: 10px 0;
+}
+
+.strategy-description {
+    font-size: 14px;
+    margin: 10px 0;
 }
 
 .choose-button {
@@ -92,10 +95,15 @@
     color: #8C5A5A;
     font-size: 14px;
     text-transform: uppercase;
+    margin-top: auto;
 }
 
 .choose-button:hover {
     color: #F89C8A;
+}
+
+.strategy-card.chosen .strategy-title {
+    font-weight: bold;
 }
 
 .half-circle {
@@ -103,51 +111,64 @@
     right: 0;
     top: 0;
     height: 100%;
-    width: 40%;
+    width: 50%; /* Увеличили ширину */
     background-color: #5A2F2F;
-    border-top-left-radius: 100%;
+    border-top-left-radius: 7000%; /* Сохранили закругление */
     border-bottom-left-radius: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center; /* Централизовали контент */
     align-items: center;
-    padding: 40px 20px;
+    padding: 0; /* Убрали отступы */
 }
 
 .circle-content {
     text-align: center;
+    margin-top: 0; /* Убрали дополнительный отступ сверху */
+    margin-bottom: 0; /* Убрали отступ снизу */
 }
 
 .title {
-    font-size: 24px;
-    margin: 0;
+    margin-top: 150px;
+    margin-left: 200px;
+    font-size: 24px; /* Немного уменьшили заголовок */
+    margin-bottom: 10px;
 }
 
 .subtitle {
-    font-size: 14px;
+    margin-left: 200px;
+    font-size: 18px;
     opacity: 0.8;
-    margin: 5px 0 20px;
+    margin-bottom: 20px; /* Небольшой отступ для текста */
 }
 
 .global-title {
-    font-size: 36px;
-    margin: 0;
+    margin-top: 50px;
+    margin-left: 200px;
+    font-size: 100px;
     text-align: center;
     line-height: 1.2;
-}
-
-.strategy-highlight {
+    white-space: pre-wrap;
+    margin-bottom: 40px;
+  }
+  
+  .strategy-highlight {
+    margin-top: 40px;
     color: #F89C8A;
-}
+    display: block; /* Додає розрив рядка між словами */
+  }
+
 
 .save-button {
-    padding: 10px 20px;
+    margin-left: 200px;
+    padding: 20px 40px;
     background-color: #F89C8A;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 20px;
     color: #FFF7E8;
+    margin-bottom: 20px;
 }
 
 .save-button:hover {
