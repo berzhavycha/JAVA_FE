@@ -69,8 +69,9 @@ const GlobalStrategy: React.FC = () => {
             <h1 className="title">TICKETS SIMULATOR</h1>
             <p className="subtitle">SETTINGS</p>
             <h2 className="global-title">
-              GLOBAL <span className="strategy-highlight">STRATEGY</span>
-            </h2>
+  GLOBAL <br />
+  <p className="strategy-highlight">STRATEGY</p>
+</h2>
           </div>
           <button className="save-button" onClick={handleSave}>
             SAVE

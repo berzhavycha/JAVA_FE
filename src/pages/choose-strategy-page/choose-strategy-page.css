@@ -4,9 +4,15 @@
     padding: 0;
     background-color: #8C5A5A;
     color: #FFF7E8;
+    cursor: default;
 }
+* {
+  
+    user-select: none; /* Забороняємо виділення тексту */
+  }
 
 .global-strategy-container {
+    cursor: default;
     display: flex;
     position: relative;
     height: 100vh;
@@ -105,57 +111,64 @@
     right: 0;
     top: 0;
     height: 100%;
-    width: 40%;
+    width: 50%; /* Увеличили ширину */
     background-color: #5A2F2F;
-    border-top-left-radius: 100%;
+    border-top-left-radius: 7000%; /* Сохранили закругление */
     border-bottom-left-radius: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Перемістили контент вниз */
+    justify-content: center; /* Централизовали контент */
     align-items: center;
-    padding: 40px 20px;
+    padding: 0; /* Убрали отступы */
 }
 
 .circle-content {
     text-align: center;
-    margin-top: auto; /* Підняли "Tickets Simulator" і "Settings" нижче */
-    margin-bottom: 100px; /* Збільшили відступ від "Global Strategy" */
+    margin-top: 0; /* Убрали дополнительный отступ сверху */
+    margin-bottom: 0; /* Убрали отступ снизу */
 }
 
 .title {
-    font-size: 28px; /* Більший текст для "Tickets Simulator" */
+    margin-top: 150px;
+    margin-left: 200px;
+    font-size: 24px; /* Немного уменьшили заголовок */
     margin-bottom: 10px;
 }
 
 .subtitle {
-    font-size: 18px; /* Більший текст для "Settings" */
+    margin-left: 200px;
+    font-size: 18px;
     opacity: 0.8;
-    margin-bottom: 50px; /* Додатковий відступ для тексту */
+    margin-bottom: 20px; /* Небольшой отступ для текста */
 }
 
 .global-title {
-    font-size: 60px; /* Ще більший текст для "Global Strategy" */
-    margin: 0;
+    margin-top: 50px;
+    margin-left: 200px;
+    font-size: 100px;
     text-align: center;
-    line-height: 1.3; /* Міжрядковий інтервал для двох рядків */
-    white-space: pre-wrap; /* Розбиття на 2 рядки */
-    margin-top: 20px; /* Опустили текст нижче */
-    margin-bottom: 60px; /* Відступ від кнопки */
-}
-
-.strategy-highlight {
+    line-height: 1.2;
+    white-space: pre-wrap;
+    margin-bottom: 40px;
+  }
+  
+  .strategy-highlight {
+    margin-top: 40px;
     color: #F89C8A;
-}
+    display: block; /* Додає розрив рядка між словами */
+  }
+
 
 .save-button {
-    padding: 20px 40px; /* Зробили кнопку більшою */
+    margin-left: 200px;
+    padding: 20px 40px;
     background-color: #F89C8A;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 22px;
+    font-size: 20px;
     color: #FFF7E8;
-    margin-bottom: 40px; /* Додатковий відступ */
+    margin-bottom: 20px;
 }
 
 .save-button:hover {
