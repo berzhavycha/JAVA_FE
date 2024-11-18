@@ -1,0 +1,125 @@
+.map-container {
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+    background-color: #3C2020;
+    height: 100vh;
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    border-radius: 8px;
+}
+
+.map-title {
+    text-transform: uppercase;
+    font-weight: 200;
+    font-size: 2rem;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.start-button {
+    background-color: #F7F3DB;
+    color: #3b2814;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.start-button:hover {
+    background-color: #ffb400;
+}
+
+.map-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+}
+
+.draggable-item {
+    padding: 0.5rem 1rem;
+    background-color: #ccc;
+    border: 1px solid #333;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    width: 100%;
+    height: 350px;
+    background-color: #F7F3DB;
+}
+
+.grid-cell {
+    width: 65px;
+    height: 65px;
+    background-color: #F7F3DB;
+    border: 1px solid #aaa;
+    position: relative;
+}
+
+.grid-cell.desk-grid-cell {
+    background-color: #3C2020;
+    border: none;
+}
+
+.unavailable-grid-cell {
+    width: 65px;
+    height: 65px;
+    background-color: #3C2020;
+}
+
+.grid-cell.droppable {
+    background-color: #d0f0c0;
+}
+
+.grid-cell.hovered {
+    background-color: #f0c0c0;
+}
+
+.red-rectangles-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.red-rectangle {
+    width: 65px;
+    height: 10px;
+    background-color: red;
+    margin-right: 2px;
+}
+
+.desk-grid {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+}
