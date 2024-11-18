@@ -29,9 +29,10 @@ const GlobalStrategy: React.FC = () => {
     setSelectedStrategy(id);
   };
 
-  const handleBack= (id: number) => {
+  const handleBack= () => {
     navigate("/global-strategy-form");
   };
+  
   const handleSave = () => {
     alert(`Strategy ${selectedStrategy} has been saved!`);
   };

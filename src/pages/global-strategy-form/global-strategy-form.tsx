@@ -12,15 +12,15 @@ const BackIcon = () => (
 type FieldName = 'mapWidth' | 'mapHeight' | 'desks' | 'entrances' | 
                 'minServiceTime' | 'maxServiceTime' | 'maxClients';
 
-interface Settings {
-    mapWidth: string;
-    mapHeight: string;
-    desks: string;
-    entrances: string;
-    minServiceTime: string;
-    maxServiceTime: string;
-    maxClients: string;
-}
+// interface Settings {
+//     mapWidth: string;
+//     mapHeight: string;
+//     desks: string;
+//     entrances: string;
+//     minServiceTime: string;
+//     maxServiceTime: string;
+//     maxClients: string;
+// } entity to be received from back
 
 type FormErrors = Partial<Record<FieldName, string>>;
 
