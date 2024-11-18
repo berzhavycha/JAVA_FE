@@ -5,11 +5,8 @@
     background-color: #8C5A5A;
     color: #FFF7E8;
     cursor: default;
-}
-* {
-  
     user-select: none; /* Забороняємо виділення тексту */
-  }
+}
 
 .global-strategy-container {
     cursor: default;
@@ -128,7 +125,7 @@
     margin-bottom: 0; /* Убрали отступ снизу */
 }
 
-.title {
+.choose-title {
     margin-top: 150px;
     margin-left: 200px;
     font-size: 24px; /* Немного уменьшили заголовок */
