@@ -54,7 +54,7 @@ const GlobalStrategy: React.FC = () => {
               className={`strategy-card ${strategy.id === selectedStrategy ? 'chosen' : ''}`}
               onClick={() => handleChoose(strategy.id)}
             >
-              <h2 className="strategy-title">{strategy.title}</h2>
+              <h2 className="csp-strategy-title">{strategy.title}</h2>
               {strategy.image}
               <p className="strategy-description">{strategy.description}</p>
               <button className="choose-button">
@@ -67,13 +67,13 @@ const GlobalStrategy: React.FC = () => {
         <div className="half-circle">
           <div className="circle-content">
             <h1 className="choose-title">TICKETS SIMULATOR</h1>
-            <p className="subtitle">SETTINGS</p>
-            <h2 className="global-title">
+            <p className="csp-subtitle">SETTINGS</p>
+            <h2 className="csp-global-title">
   GLOBAL <br />
   <p className="strategy-highlight">STRATEGY</p>
 </h2>
           </div>
-          <button className="save-button" onClick={handleSave}>
+          <button className="csp-save-button" onClick={handleSave}>
             SAVE
           </button>
         </div>
