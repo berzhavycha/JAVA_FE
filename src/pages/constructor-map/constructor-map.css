@@ -56,13 +56,11 @@
 
 .controls {
     display: flex;
+    align-items: center;
     gap: 1rem;
 }
 
 .draggable-item {
-    padding: 0.5rem 1rem;
-    background-color: #ccc;
-    border: 1px solid #333;
     border-radius: 4px;
     text-align: center;
     font-size: 14px;
@@ -123,3 +121,29 @@
     display: flex;
     gap: 10px;
 }
+
+.draggable-item-container {
+    position: relative;
+    display: inline-block;
+}
+
+.item-counter {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.draggable-item {
+    position: relative;
+}
+

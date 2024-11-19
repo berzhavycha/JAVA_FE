@@ -2,62 +2,62 @@ import { FC, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "./constructor-map.css";
-
-type DragItem = {
-    type: string;
-    id: number;
-};
+import DeskImage from '../../assets/information-desk 2.png';
+import EntranceImage from '../../assets/Entrance.png';
 
 const DRAG_TYPES = {
     DESK: "desk",
+    RESERVED_DESK: "reserved_desk",
     ENTRANCE: "entrance",
 };
 
-const DraggableItem: FC<{
-    id: number;
-    type: string;
-    label: string;
-    onDragStart: (type: string) => void;
-}> = ({ id, type, label, onDragStart }) => {
+const DraggableItem = ({ id, type, label, onDragStart, count }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
         type,
         item: () => {
-            onDragStart(type); // Notify parent of the current drag type
-            return { id, type }; // Return the item object
+            // Only allow drag if count > 0
+            if (count > 0) {
+                onDragStart(type);
+                return { id, type };
+            }
+            return null;
         },
+        canDrag: () => count > 0, // Explicitly prevent dragging when count is 0
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
-        end: () => onDragStart(""), // Reset the drag state when dragging ends
+        end: () => onDragStart(""),
     }));
 
     return (
-        <div
-            ref={drag}
-            className="draggable-item"
-            style={{
-                opacity: isDragging ? 0.5 : 1,
-                cursor: "move",
-            }}
-        >
-            {label}
+        <div className="draggable-item-container">
+            <div
+                ref={drag}
+                className={`draggable-item ${count === 0 ? 'disabled' : ''}`}
+                style={{
+                    opacity: isDragging ? 0.5 : count > 0 ? 1 : 0.5,
+                    cursor: count > 0 ? "move" : "not-allowed",
+                    pointerEvents: count > 0 ? "auto" : "none", // Disable pointer events when count is 0
+                }}
+            >
+                {label}
+                <span className="item-counter">{count}</span>
+            </div>
         </div>
     );
 };
 
-
-const GridCell: FC<{
-    x: number;
-    onDrop: (item: DragItem, x: number) => void;
-    item: DragItem | null; // Pass the cell's content
-    className?: string;
-}> = ({ x, onDrop, item, className }) => {
+const GridCell = ({ x, onDrop, item, className }) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
-        accept: [DRAG_TYPES.DESK, DRAG_TYPES.ENTRANCE],
-        drop: (draggedItem: DragItem) => onDrop(draggedItem, x),
+        accept: [DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK, DRAG_TYPES.ENTRANCE],
+        drop: (draggedItem) => {
+            if (draggedItem) {  // Only process drop if we have a valid item
+                onDrop(draggedItem, x);
+            }
+        },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
-            canDrop: !!monitor.canDrop(),
+            canDrop: !!monitor.canDrop() && monitor.getItem() !== null, // Only allow drop if we have a valid item
         }),
     }));
 
@@ -66,64 +66,65 @@ const GridCell: FC<{
             ref={drop}
             className={`grid-cell ${isOver ? "hovered" : ""} ${canDrop ? "droppable" : ""} ${className}`}
         >
-            {item && <span>{item.type === DRAG_TYPES.DESK ? "Desk" : "Entrance"}</span>}
+            {item && (
+                <span>
+                    <img
+                        src={item.type === DRAG_TYPES.DESK || item.type === DRAG_TYPES.RESERVED_DESK ? DeskImage : EntranceImage}
+                        alt={item.type}
+                    />
+                </span>
+            )}
         </div>
     );
 };
 
-const RedRectanglesRow: FC<{ currentDragType: string, dragType: string; columnCount: number, availableColumns: number[]; }> = ({ currentDragType, dragType, columnCount, availableColumns }) => {
-    const [grid, setGrid] = useState<(null | DragItem)[][]>(
-        Array.from({ length: 20 }, () => Array(20).fill(null))
-    );
+const RedRectanglesRow = ({ currentDragType, dragType, columnCount, availableColumns, onDrop }: {
+    currentDragType: string,
+    dragType: string | string[],
+    columnCount: number;
+    availableColumns: number[];
+    onDrop: (type: string) => void;
+}) => {
+    const [grid, setGrid] = useState(Array.from({ length: 20 }, () => Array(20).fill(null)));
 
-    const handleDrop = (item: DragItem, x: number) => {
+    const handleDrop = (item, x) => {
         setGrid((prevGrid) => {
             const newGrid = prevGrid.map((row) => [...row]);
             newGrid[0][x] = item;
             return newGrid;
         });
+        onDrop(item.type);
     };
-
 
     return (
         <>
             {currentDragType === dragType && dragType === DRAG_TYPES.ENTRANCE && (
                 <div className="red-rectangles-row">
                     {Array.from({ length: columnCount }).map((_, index) => (
-                        <>
-                            <div key={index} className="red-rectangle" />
-                        </>
+                        <div key={index} className="red-rectangle" />
                     ))}
                 </div>
             )}
             <div className="desk-grid">
                 {grid[0].map((cell, x) => {
                     const isAvailable = availableColumns.includes(x);
-
-                    return (
-                        <>
-                            {isAvailable ? (
-                                <GridCell
-                                    key={`${x}`}
-                                    x={x}
-                                    onDrop={handleDrop}
-                                    item={cell}
-                                    className="desk-grid-cell"
-                                />
-                            ) : (
-                                <div className="unavailable-grid-cell"></div>
-                            )}
-                        </>
-
-                    )
+                    return isAvailable ? (
+                        <GridCell
+                            key={`${x}`}
+                            x={x}
+                            onDrop={handleDrop}
+                            item={cell}
+                            className="desk-grid-cell"
+                        />
+                    ) : (
+                        <div key={`${x}`} className="unavailable-grid-cell"></div>
+                    );
                 })}
             </div>
-            {currentDragType === dragType && dragType === DRAG_TYPES.DESK && (
+            {Array.isArray(dragType) && dragType.includes(currentDragType) && (
                 <div className="red-rectangles-row">
                     {Array.from({ length: columnCount }).map((_, index) => (
-                        <>
-                            <div key={index} className="red-rectangle" />
-                        </>
+                        <div key={index} className="red-rectangle" />
                     ))}
                 </div>
             )}
@@ -131,12 +132,24 @@ const RedRectanglesRow: FC<{ currentDragType: string, dragType: string; columnCo
     );
 };
 
-export const ConstructorMap: FC = () => {
-    const [grid, setGrid] = useState<(null | DragItem)[][]>(
-        Array.from({ length: 10 }, () => Array(10).fill(null))
-    );
-    const [currentDragType, setCurrentDragType] = useState<string>("");
+export const ConstructorMap = () => {
+    const [grid, setGrid] = useState(Array.from({ length: 10 }, () => Array(10).fill(null)));
+    const [currentDragType, setCurrentDragType] = useState("");
+    const [itemCounts, setItemCounts] = useState({
+        [DRAG_TYPES.DESK]: 3,
+        [DRAG_TYPES.ENTRANCE]: 3,
+        [DRAG_TYPES.RESERVED_DESK]: 3,
+    });
     const availableColumns = [0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+    const availableEntranceColumns = [0, 1, 2, 3, 4,5,6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+
+    const handleDrop = (itemType) => {
+        console.log(itemType)
+        setItemCounts((prev) => ({
+            ...prev,
+            [itemType]: Math.max(0, prev[itemType] - 1),
+        }));
+    };
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -147,31 +160,51 @@ export const ConstructorMap: FC = () => {
                         <DraggableItem
                             id={1}
                             type={DRAG_TYPES.DESK}
-                            label="Desk"
+                            label={<img src={DeskImage} />}
                             onDragStart={setCurrentDragType}
+                            count={itemCounts[DRAG_TYPES.DESK]}
                         />
                         <DraggableItem
                             id={2}
-                            type={DRAG_TYPES.ENTRANCE}
-                            label="Entrance"
+                            type={DRAG_TYPES.RESERVED_DESK}
+                            label={<img src={DeskImage} />}
                             onDragStart={setCurrentDragType}
+                            count={itemCounts[DRAG_TYPES.RESERVED_DESK]}
+                        />
+                        <DraggableItem
+                            id={3}
+                            type={DRAG_TYPES.ENTRANCE}
+                            label={<img src={EntranceImage} />}
+                            onDragStart={setCurrentDragType}
+                            count={itemCounts[DRAG_TYPES.ENTRANCE]}
                         />
                     </div>
                     <button className="start-button">Start Simulation</button>
                 </header>
-                <RedRectanglesRow currentDragType={currentDragType} dragType={DRAG_TYPES.DESK} columnCount={20} availableColumns={availableColumns} />
+                <RedRectanglesRow
+                    currentDragType={currentDragType}
+                    dragType={[DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK]}
+                    columnCount={20}
+                    availableColumns={availableColumns}
+                    onDrop={handleDrop}
+                />
                 <div className="grid-container">
                     {grid.map((row, y) =>
                         row.map((cell, x) => (
-                            <div
-                                className={`grid-cell`}
-                            >
-                            </div>
+                            <div key={`${y}-${x}`} className="grid-cell" />
                         ))
                     )}
                 </div>
-                <RedRectanglesRow currentDragType={currentDragType} dragType={DRAG_TYPES.ENTRANCE} columnCount={20} availableColumns={availableColumns} />
+                <RedRectanglesRow
+                    currentDragType={currentDragType}
+                    dragType={DRAG_TYPES.ENTRANCE}
+                    columnCount={20}
+                    availableColumns={availableEntranceColumns}
+                    onDrop={handleDrop}
+                />
             </div>
         </DndProvider>
     );
 };
+
+export default ConstructorMap;
