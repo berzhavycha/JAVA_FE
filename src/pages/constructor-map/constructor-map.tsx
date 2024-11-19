@@ -5,6 +5,7 @@ import "./constructor-map.css";
 import DeskImage from '../../assets/information-desk 2.png';
 import EntranceImage from '../../assets/Entrance.png';
 import { useLocation } from "react-router-dom";
+import LogList from "../../components/log-list/log-list";
 
 const DRAG_TYPES = {
     DESK: "desk",
@@ -68,12 +69,10 @@ const GridCell = ({ x, onDrop, item, className }) => {
             className={`grid-cell ${isOver ? "hovered" : ""} ${canDrop ? "droppable" : ""} ${className}`}
         >
             {item && (
-                <span>
                     <img
                         src={item.type === DRAG_TYPES.DESK || item.type === DRAG_TYPES.RESERVED_DESK ? DeskImage : EntranceImage}
                         alt={item.type}
                     />
-                </span>
             )}
         </div>
     );
@@ -146,6 +145,7 @@ export const ConstructorMap = () => {
         [DRAG_TYPES.ENTRANCE]: parseInt(location.state.settings.entrances),
         [DRAG_TYPES.RESERVED_DESK]: 3,
     });
+    const [isLogsShown, setIsLogShown] = useState<boolean>(false)
 
     const [grid, setGrid] = useState(
         Array.from({ length: mapHeight }, () => Array(mapWidth).fill(null))
@@ -172,6 +172,10 @@ export const ConstructorMap = () => {
         }));
     };
 
+
+    const showLogs = () => {
+        setIsLogShown(prev => !prev)
+    }
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -202,6 +206,12 @@ export const ConstructorMap = () => {
                         />
                     </div>
                     <button className="start-button">Start Simulation</button>
+                    <button className="start-button" onClick={showLogs}>Show Logs</button>
+                    {isLogsShown && (
+                        <div className="log-list">
+                            <LogList logs={[]} />
+                        </div>
+                    )}
                 </header>
                 <RedRectanglesRow
                     currentDragType={currentDragType}

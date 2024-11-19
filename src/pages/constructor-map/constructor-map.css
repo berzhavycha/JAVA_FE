@@ -127,6 +127,17 @@
     grid-template-rows: repeat(var(--map-width), 1fr);
 }
 
+.desk-grid img {
+    width: 100%;
+}
+
+.log-list {
+    position: absolute;
+    top: 100px;
+    right: 100px;
+    z-index: 100;
+}
+
 .entrance-block {
     width: calc(100% / var(--map-width));
 }
