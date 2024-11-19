@@ -1,9 +1,10 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "./constructor-map.css";
 import DeskImage from '../../assets/information-desk 2.png';
 import EntranceImage from '../../assets/Entrance.png';
+import { useLocation } from "react-router-dom";
 
 const DRAG_TYPES = {
     DESK: "desk",
@@ -114,7 +115,7 @@ const RedRectanglesRow = ({ currentDragType, dragType, columnCount, availableCol
                             x={x}
                             onDrop={handleDrop}
                             item={cell}
-                            className="desk-grid-cell"
+                            className={`desk-grid-cell`}
                         />
                     ) : (
                         <div key={`${x}`} className="unavailable-grid-cell"></div>
@@ -133,23 +134,44 @@ const RedRectanglesRow = ({ currentDragType, dragType, columnCount, availableCol
 };
 
 export const ConstructorMap = () => {
-    const [grid, setGrid] = useState(Array.from({ length: 10 }, () => Array(10).fill(null)));
     const [currentDragType, setCurrentDragType] = useState("");
+    const location = useLocation();
+    console.log(location.state);
+
+    const mapWidth = parseInt(location.state.settings.mapWidth);
+    const mapHeight = parseInt(location.state.settings.mapHeight);
+
     const [itemCounts, setItemCounts] = useState({
-        [DRAG_TYPES.DESK]: 3,
-        [DRAG_TYPES.ENTRANCE]: 3,
+        [DRAG_TYPES.DESK]: parseInt(location.state.settings.desks),
+        [DRAG_TYPES.ENTRANCE]: parseInt(location.state.settings.entrances),
         [DRAG_TYPES.RESERVED_DESK]: 3,
     });
-    const availableColumns = [0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-    const availableEntranceColumns = [0, 1, 2, 3, 4,5,6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+
+    const [grid, setGrid] = useState(
+        Array.from({ length: mapHeight }, () => Array(mapWidth).fill(null))
+    );
+
+    useEffect(() => {
+        document.documentElement.style.setProperty("--map-width", `${mapWidth}`);
+        document.documentElement.style.setProperty("--map-height", `${mapHeight}`);
+    }, [mapWidth, mapHeight]);
+
+    const generateAvailableColumns = (width: number, skip: number[]) => {
+        return Array.from({ length: width }, (_, index) =>
+            skip.includes(index) ? null : index
+        ).filter((x) => x !== null);
+    };
+
+    const availableColumns = generateAvailableColumns(mapWidth, [5, 6]);
+    const availableEntranceColumns = generateAvailableColumns(mapWidth, [5, 6]);
 
     const handleDrop = (itemType) => {
-        console.log(itemType)
         setItemCounts((prev) => ({
             ...prev,
             [itemType]: Math.max(0, prev[itemType] - 1),
         }));
     };
+
 
     return (
         <DndProvider backend={HTML5Backend}>

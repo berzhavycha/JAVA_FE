@@ -4,7 +4,7 @@ import Image1 from '../../assets/Strategy1.jpg'
 import Image2 from '../../assets/Strategy2.jpg'
 import Image3 from '../../assets/Strategy3.jpg'
 import Image4 from '../../assets/train-ticket.png'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type Strategy = {
   id: number;
@@ -22,6 +22,7 @@ const strategies: Strategy[] = [
 
 const GlobalStrategy: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation()
 
   const [selectedStrategy, setSelectedStrategy] = useState<number>(1);
 
@@ -34,7 +35,12 @@ const GlobalStrategy: React.FC = () => {
   };
   
   const handleSave = () => {
-    alert(`Strategy ${selectedStrategy} has been saved!`);
+    navigate("/constructor-map", {
+      state: {
+        ...location.state,
+        selectedStrategy
+      }
+    })
   };
 
   return (

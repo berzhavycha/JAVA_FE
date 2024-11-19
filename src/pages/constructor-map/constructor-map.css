@@ -68,16 +68,16 @@
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(20, 1fr);
-    grid-template-rows: repeat(20, 1fr);
+    grid-template-columns: repeat(var(--map-height), 1fr);
+    grid-template-rows: repeat(var(--map-width), 1fr);
     width: 100%;
     height: 350px;
     background-color: #F7F3DB;
-}
+} 
 
 .grid-cell {
-    width: 65px;
-    height: 65px;
+    width: 100%;
+    height: 100%;
     background-color: #F7F3DB;
     border: 1px solid #aaa;
     position: relative;
@@ -104,22 +104,31 @@
 
 .red-rectangles-row {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 4px;
+    display: grid;
+    gap: 3px;
+    grid-template-columns: repeat(var(--map-height), 1fr);
+    grid-template-rows: repeat(var(--map-width), 1fr);
+    height: 10px;
+    background-color: red;
 }
 
 .red-rectangle {
-    width: 65px;
-    height: 10px;
+    width: 100%;
+    height: 100%;
     background-color: red;
-    margin-right: 2px;
 }
 
 .desk-grid {
     width: 100%;
-    display: flex;
-    gap: 10px;
+    height: 100px;
+    display: grid;
+    gap: 1px;
+    grid-template-columns: repeat(var(--map-height), 1fr);
+    grid-template-rows: repeat(var(--map-width), 1fr);
+}
+
+.entrance-block {
+    width: calc(100% / var(--map-width));
 }
 
 .draggable-item-container {

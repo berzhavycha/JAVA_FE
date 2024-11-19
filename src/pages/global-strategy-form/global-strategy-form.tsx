@@ -146,7 +146,9 @@ export const GlobalStrategyForm: React.FC = () => {
         
         if (isValid) {
             try {
-                navigate('/choose-strategy-page');
+                navigate(`/choose-strategy-page`, {state: {
+                    settings
+                }});
             } catch (error) {
                 console.error('Error saving settings:', error);
             }
