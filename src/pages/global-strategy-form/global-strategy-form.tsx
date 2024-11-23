@@ -143,30 +143,68 @@ export const GlobalStrategyForm: React.FC = () => {
     const handleSave = async () => {
         setIsSubmitting(true);
         const { errors: formErrors, isValid } = validateForm();
-        
+
         if (isValid) {
+            // Transform form data to API request body
+            const deskCount = Number(settings.desks);
+            const entranceCount = Number(settings.entrances);
+            const requestBody = {
+                deskPositions: Array.from({ length: deskCount }, (_, i) => ({ x: i, y: 0 })),
+                entrancePositions: Array.from({ length: entranceCount }, (_, i) => ({ x: 0, y: i })),
+                reserveDeskPosition: { x: 0, y: 0 }, // Default or configurable
+                minServiceTime: Number(settings.minServiceTime),
+                maxServiceTime: Number(settings.maxServiceTime),
+                clientGenerator: { generatorType: "default" }, // Replace "default" with actual logic
+                maxClientNumber: Number(settings.maxClients),
+                stationWidth: Number(settings.mapWidth),
+                stationHeight: Number(settings.mapHeight),
+            };
+
             try {
-                navigate(`/choose-strategy-page`, {state: {
-                    settings
-                }});
+                const response = await fetch("http://localhost:8080/settings", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        "deskPositions": [
+                            { "x": 2, "y": 1 },
+                            { "x": 5, "y": 1 }
+                        ],
+                        "entrancePositions": [
+                            { "x": 5, "y": 10 },
+                            { "x": 7, "y": 10 }
+                        ],
+                        "reserveDeskPosition": { "x": 8, "y": 1 },
+                        "minServiceTime": 4000,
+                        "maxServiceTime": 6000,
+                        "clientGenerator": {
+                            "generatorType": "increasing"
+                        },
+                        "maxClientNumber": 10,
+                        "stationWidth": 10,
+                        "stationHeight": 10
+                    }),
+                });
+
+                if (response.ok) {
+                    console.log("Settings saved successfully!");
+                    navigate(`/choose-strategy-page`, { state: { settings } });
+                } else {
+                    console.error("Failed to save settings:", await response.text());
+                }
             } catch (error) {
-                console.error('Error saving settings:', error);
+                console.error("Error saving settings:", error);
             }
         } else {
             setErrors(formErrors);
-            const allTouched: Record<FieldName, boolean> = {
-                mapWidth: true,
-                mapHeight: true,
-                desks: true,
-                entrances: true,
-                minServiceTime: true,
-                maxServiceTime: true,
-                maxClients: true
-            };
-            setTouched(allTouched);
+            const allTouched = Object.keys(touched).reduce(
+                (acc, key) => ({ ...acc, [key]: true }),
+                {}
+            );
+            setTouched(allTouched as Record<FieldName, boolean>);
         }
         setIsSubmitting(false);
     };
+
 
     const handleBack = () => {
         navigate("/");

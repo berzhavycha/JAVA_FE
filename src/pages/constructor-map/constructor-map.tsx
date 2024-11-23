@@ -6,6 +6,8 @@ import DeskImage from '../../assets/information-desk 2.png';
 import EntranceImage from '../../assets/Entrance.png';
 import { useLocation } from "react-router-dom";
 import LogList from "../../components/log-list/log-list";
+import StandingManImage from '../../assets/standing-up-man- 4.png'
+import { Socket, connect } from "socket.io-client";
 
 const DRAG_TYPES = {
     DESK: "desk",
@@ -13,18 +15,21 @@ const DRAG_TYPES = {
     ENTRANCE: "entrance",
 };
 
+const SOCKET_URL = "http://localhost:8082";
+
+// const socket = io(SOCKET_URL);
+
 const DraggableItem = ({ id, type, label, onDragStart, count }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
         type,
         item: () => {
-            // Only allow drag if count > 0
             if (count > 0) {
                 onDragStart(type);
                 return { id, type };
             }
             return null;
         },
-        canDrag: () => count > 0, // Explicitly prevent dragging when count is 0
+        canDrag: () => count > 0,
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
@@ -39,7 +44,7 @@ const DraggableItem = ({ id, type, label, onDragStart, count }) => {
                 style={{
                     opacity: isDragging ? 0.5 : count > 0 ? 1 : 0.5,
                     cursor: count > 0 ? "move" : "not-allowed",
-                    pointerEvents: count > 0 ? "auto" : "none", // Disable pointer events when count is 0
+                    pointerEvents: count > 0 ? "auto" : "none",
                 }}
             >
                 {label}
@@ -49,19 +54,22 @@ const DraggableItem = ({ id, type, label, onDragStart, count }) => {
     );
 };
 
-const GridCell = ({ x, onDrop, item, className }) => {
+const GridCell = ({ currentDragType, x, onDrop, item, className, placedItem }) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK, DRAG_TYPES.ENTRANCE],
         drop: (draggedItem) => {
-            if (draggedItem) {  // Only process drop if we have a valid item
+            if (draggedItem) {
                 onDrop(draggedItem, x);
             }
         },
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-            canDrop: !!monitor.canDrop() && monitor.getItem() !== null, // Only allow drop if we have a valid item
-        }),
+        collect: (monitor) => {
+            return ({
+                isOver: !!monitor.isOver(),
+                canDrop: !!monitor.canDrop() && monitor.getItem() !== null && monitor.getItem().type === currentDragType,
+            })
+        },
     }));
+
 
     return (
         <div
@@ -69,11 +77,12 @@ const GridCell = ({ x, onDrop, item, className }) => {
             className={`grid-cell ${isOver ? "hovered" : ""} ${canDrop ? "droppable" : ""} ${className}`}
         >
             {item && (
-                    <img
-                        src={item.type === DRAG_TYPES.DESK || item.type === DRAG_TYPES.RESERVED_DESK ? DeskImage : EntranceImage}
-                        alt={item.type}
-                    />
+                <img
+                    src={item.type === DRAG_TYPES.DESK || item.type === DRAG_TYPES.RESERVED_DESK ? DeskImage : EntranceImage}
+                    alt={item.type}
+                />
             )}
+            {placedItem && <img src={StandingManImage} alt="Standing Man" className="standing-man" />}
         </div>
     );
 };
@@ -98,18 +107,12 @@ const RedRectanglesRow = ({ currentDragType, dragType, columnCount, availableCol
 
     return (
         <>
-            {currentDragType === dragType && dragType === DRAG_TYPES.ENTRANCE && (
-                <div className="red-rectangles-row">
-                    {Array.from({ length: columnCount }).map((_, index) => (
-                        <div key={index} className="red-rectangle" />
-                    ))}
-                </div>
-            )}
             <div className="desk-grid">
                 {grid[0].map((cell, x) => {
                     const isAvailable = availableColumns.includes(x);
                     return isAvailable ? (
                         <GridCell
+                            currentDragType={currentDragType}
                             key={`${x}`}
                             x={x}
                             onDrop={handleDrop}
@@ -121,24 +124,59 @@ const RedRectanglesRow = ({ currentDragType, dragType, columnCount, availableCol
                     );
                 })}
             </div>
-            {Array.isArray(dragType) && dragType.includes(currentDragType) && (
-                <div className="red-rectangles-row">
-                    {Array.from({ length: columnCount }).map((_, index) => (
-                        <div key={index} className="red-rectangle" />
-                    ))}
-                </div>
-            )}
         </>
     );
 };
 
+const Timer = () => {
+    const [time, setTime] = useState(() => {
+        const now = new Date();
+        return {
+            hours: now.getHours(),
+            minutes: now.getMinutes(),
+            seconds: now.getSeconds(),
+        };
+    });
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const now = new Date();
+            setTime({
+                hours: now.getHours(),
+                minutes: now.getMinutes(),
+                seconds: now.getSeconds(),
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const formatTime = (unit) => String(unit).padStart(2, "0");
+
+    return (
+        <div className="timer">
+            <span className="timer-time">
+                {formatTime(time.hours)}:{formatTime(time.minutes)}:
+                {formatTime(time.seconds)}
+            </span>
+        </div>
+    );
+};
+
+
 export const ConstructorMap = () => {
     const [currentDragType, setCurrentDragType] = useState("");
     const location = useLocation();
-    console.log(location.state);
+    const [manPositions, setManPositions] = useState([
+        // { x: 3, y: 2 },
+        // { x: 5, y: 6 },
+    ]);
+    const [socketLogs, setSocketLogs] = useState<string[]>([]);
 
     const mapWidth = parseInt(location.state.settings.mapWidth);
     const mapHeight = parseInt(location.state.settings.mapHeight);
+
+    const [isSimulationStarted, setIsSimulationStarted] = useState(false)
 
     const [itemCounts, setItemCounts] = useState({
         [DRAG_TYPES.DESK]: parseInt(location.state.settings.desks),
@@ -146,14 +184,89 @@ export const ConstructorMap = () => {
         [DRAG_TYPES.RESERVED_DESK]: 3,
     });
     const [isLogsShown, setIsLogShown] = useState<boolean>(false)
+    const [socket, setSocket] = useState<Socket | null>(null);
+
+    console.log('render')
+
+    useEffect(() => {
+        const socketInstance = connect(SOCKET_URL);
+
+        setSocket(socketInstance);
+
+        socketInstance.on('connect', () => {
+            console.log('connect')
+        });
+
+        // Event Listeners
+        const handleNewClient = (data: any) => {
+            console.log("New client event received:", data);
+            setSocketLogs((prev) => [...prev, `New client: ${JSON.stringify(data)}`]);
+        };
+
+        const handleCashDesk = (data: any) => {
+            console.log("Cash desk event received:", data);
+            setSocketLogs((prev) => [...prev, `Cash desk update: ${JSON.stringify(data)}`]);
+        };
+
+        const handleDisconnect = (reason: string) => {
+            console.log("Socket disconnected:", reason);
+            setSocketLogs((prev) => [...prev, `Disconnected: ${reason}`]);
+        };
+
+        socketInstance.on("new_client", handleNewClient);
+        socketInstance.on("cash_desk", handleCashDesk);
+        socketInstance.on("disconnect", handleDisconnect);
+
+        return () => {
+            if (socketInstance) {
+                socketInstance.off("new_client", handleNewClient);
+                socketInstance.off("cash_desk", handleCashDesk);
+                socketInstance.off("disconnect", handleDisconnect);
+                socketInstance.disconnect();
+            }
+        };
+    }, []);
+
+    const startSimulation = async () => {
+        try {
+            
+            if (!isSimulationStarted) {
+                const response = await fetch('http://localhost:8080/simulation/trainStation', {
+                    method: "POST"
+                });
+                const data = await response.json();
+                console.log("Simulation API response:", data);
+                setSocketLogs(prev => [...prev, `API Response: ${JSON.stringify(data)}`]);
+            }
+            if (socket) {
+                console.log("Emitting start_simulation event");
+                socket.emit("start_simulation");
+                setSocketLogs(prev => [...prev, "Simulation started"]);
+                setIsSimulationStarted(true);
+            }
+
+        } catch (error) {
+            console.error("Error in startSimulation:", error);
+            // setSocketLogs(prev => [...prev, `Error starting simulation: ${error.message}`]);
+        }
+    };
+
+    const stopSimulation = () => {
+        // if (socket) {
+        //     console.log("Emitting stop_simulation event");
+        //     socket.emit("stop_simulation");
+        //     setSocketLogs(prev => [...prev, "Simulation stopped"]);
+        //     setIsSimulationStarted(false);
+        // }
+    };
 
     const [grid, setGrid] = useState(
-        Array.from({ length: mapHeight }, () => Array(mapWidth).fill(null))
+        Array.from({ length: mapWidth }, () => Array(mapHeight).fill(null))
     );
 
     useEffect(() => {
         document.documentElement.style.setProperty("--map-width", `${mapWidth}`);
-        document.documentElement.style.setProperty("--map-height", `${mapHeight}`);
+        document.documentElement.style.setProperty("--map-height", `${mapWidth}`);
     }, [mapWidth, mapHeight]);
 
     const generateAvailableColumns = (width: number, skip: number[]) => {
@@ -172,7 +285,6 @@ export const ConstructorMap = () => {
         }));
     };
 
-
     const showLogs = () => {
         setIsLogShown(prev => !prev)
     }
@@ -181,8 +293,11 @@ export const ConstructorMap = () => {
         <DndProvider backend={HTML5Backend}>
             <div className="map-container">
                 <header className="map-header">
-                    <h1 className="map-title">Construct your map</h1>
-                    <div className="controls">
+                    {isSimulationStarted ?
+                        <Timer /> :
+                        <h1 className="map-title">Construct your map</h1>
+                    }
+                    {!isSimulationStarted && <div className="controls">
                         <DraggableItem
                             id={1}
                             type={DRAG_TYPES.DESK}
@@ -204,12 +319,14 @@ export const ConstructorMap = () => {
                             onDragStart={setCurrentDragType}
                             count={itemCounts[DRAG_TYPES.ENTRANCE]}
                         />
-                    </div>
-                    <button className="start-button">Start Simulation</button>
+                    </div>}
+                    <button className="start-button" onClick={isSimulationStarted ? stopSimulation : startSimulation}>
+                        {isSimulationStarted ? 'Stop' : 'Start'} Simulation
+                    </button>
                     <button className="start-button" onClick={showLogs}>Show Logs</button>
                     {isLogsShown && (
                         <div className="log-list">
-                            <LogList logs={[]} />
+                            <LogList logs={socketLogs} />
                         </div>
                     )}
                 </header>
@@ -222,9 +339,21 @@ export const ConstructorMap = () => {
                 />
                 <div className="grid-container">
                     {grid.map((row, y) =>
-                        row.map((cell, x) => (
-                            <div key={`${y}-${x}`} className="grid-cell" />
-                        ))
+                        row.map((cell, x) => {
+                            const isManHere = manPositions.some((pos) => pos.x === x && pos.y === y);
+                            return (
+                                <GridCell
+                                    key={`${y}-${x}`}
+                                    x={x}
+                                    y={y}
+                                    currentDragType={currentDragType}
+                                    onDrop={handleDrop}
+                                    item={cell}
+                                    placedItem={isManHere}
+                                    className="grid-cell"
+                                />
+                            );
+                        })
                     )}
                 </div>
                 <RedRectanglesRow
