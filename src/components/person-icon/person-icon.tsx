@@ -17,7 +17,7 @@ const PersonColorMapper: Record<string, string> = {
 const generateGradientId = (types: string[]): string => types.sort().join("-");
 
 type Props = {
-    types: CLIENT_TYPE[];
+    types: string[];
 };
 
 export const PersonIcon: FC<Props> = ({ types }) => {
@@ -40,7 +40,7 @@ export const PersonIcon: FC<Props> = ({ types }) => {
                     {colors.map((color, index) => (
                         <stop
                             key={index}
-                            offset={`${(index / (colors.length - 1)) * 100}%`}
+                            offset={colors.length === 1 ? "0%" : `${(index / (colors.length - 1)) * 100}%`}
                             stopColor={color}
                         />
                     ))}

@@ -17,7 +17,7 @@ export const DraggableItem: FC<Props> = ({ id, type, icon, label, onDragStart, c
         item: () => {
             if (count > 0) {
                 onDragStart(type);
-                return { id, type };
+                return { id, type, broken: false };
             }
             return null;
         },

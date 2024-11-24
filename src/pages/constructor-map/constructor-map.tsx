@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "./constructor-map.css";
@@ -9,7 +9,7 @@ import LogList from "../../components/log-list/log-list";
 import { Socket, connect } from "socket.io-client";
 import { DraggableItem } from "./components/draggable-item";
 import { DRAG_TYPES, GridCell } from "./components/grid-cell";
-import { RedRectanglesRow } from "./components/red-rectangle-row";
+import { RedRectanglesRow, RedRectanglesRowHandle } from "./components/red-rectangle-row";
 import { Timer } from "./components/timer";
 
 const SOCKET_URL = "http://localhost:8082";
@@ -81,6 +81,8 @@ export const ConstructorMap = () => {
 
     const navigate = useNavigate()
 
+    const redRectanglesRowRef = useRef<RedRectanglesRowHandle>(null);
+
     useEffect(() => {
         if (trainSimulation) {
             const updatedClients = trainSimulation.cashDesks.flatMap(desk =>
@@ -136,6 +138,8 @@ export const ConstructorMap = () => {
                 const simulationData: TrainSimulationResponse = await response.json();
                 console.log("Simulation API response:", simulationData);
                 console.log("Cash desk event received:", data);
+
+                redRectanglesRowRef.current?.onStatusChangeDesk(data.position.x, data.broken);
 
                 setClients(clients => [...clients].map(client => {
                     const previousCashDeskData = trainSimulation?.cashDesks.find(desk => desk.id === data.id);
@@ -341,6 +345,7 @@ export const ConstructorMap = () => {
                 <div className="game-area" style={{ width: gridDimensions.width }}>
                     <div className="drop-area">
                         <RedRectanglesRow
+                            ref={redRectanglesRowRef}
                             currentDragType={currentDragType}
                             dragType={[DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK]}
                             columnCount={mapWidth}
@@ -360,7 +365,7 @@ export const ConstructorMap = () => {
                         {grid.map((row, y) =>
                             row.map((cell, x) => {
                                 const client = clients.find(
-                                    (pos) => pos.position.x === (x + 1) && pos.position.y === (y + 1)
+                                    (pos) => pos.position.x === x && pos.position.y === y + 1
                                 );
 
                                 return (

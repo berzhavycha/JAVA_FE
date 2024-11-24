@@ -69,7 +69,7 @@ export const GridCell: React.FC<Props> = ({
                 <div
                     className="desk-label"
                     style={{
-                        color: 'red',
+                        color: isBroken ? 'red' : 'green',
                         fontSize: 'calc(var(--cell-size) * 0.15)', 
                         fontWeight: `calc(200 + (var(--cell-size) * 0.1))`,
                     }}
