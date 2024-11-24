@@ -12,35 +12,52 @@
   
   .logging-scroll-container {
     flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 16px;
-    scrollbar-width: none;  /* Firefox */
-    -ms-overflow-style: none;  /* IE and Edge */
+    overflow-y: auto; 
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
   }
   
   .logging-scroll-container::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari and Opera */
+    display: none;
   }
   
   .log-entry {
     background-color: #FAF3E8;
     border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
     font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
   }
   
   .log-time {
     color: #FF6B6B;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 500;
-    margin-bottom: 4px;
+    margin-right: 10px;
+    flex-shrink: 0;
   }
   
   .log-message {
     color: #FF6B6B;
     font-size: 16px;
-    line-height: 1.4;
+    white-space: nowrap;          
+    overflow: hidden;           
+    text-overflow: ellipsis;    
+    flex-grow: 1;      
+    margin-left: 10px;        
+  }  
+  
+  .log-placeholder .log-time {
+    color: #AAAAAA;
+  }
+  
+  .log-placeholder .log-message {
+    color: #AAAAAA;
+    font-style: italic;
   }
   
   .log-ellipsis {
@@ -87,11 +104,7 @@
     }
   }
   
-  .log-entry {
-    animation: fadeIn 0.3s ease-out;
-  }
   
-  /* Example usage styles */
   .example-container {
     min-height: 100vh;
     background-color: #6B4242;

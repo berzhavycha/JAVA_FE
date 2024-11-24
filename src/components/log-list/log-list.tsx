@@ -30,14 +30,21 @@ const LogList: React.FC<LoggingProps> = ({ logs }) => {
   return (
     <div className="logging-container">
       <div className="logging-scroll-container" ref={scrollContainerRef}>
-        {logs.map((log, index) => (
-          <div key={index} className="log-entry">
-            <div className="log-time">{formatTime(log.startTimeMs)}</div>
-            <div className="log-message">
-              Passenger {log.clientId} has purchased {log.ticketCount} ticket(s) at desk {log.cashDeskId}
-            </div>
+        {logs.length === 0 ? (
+          <div className="log-entry log-placeholder">
+            <div className="log-time">--:--:--</div>
+            <div className="log-message">Logs are empty</div>
           </div>
-        ))}
+        ) : (
+          logs.map((log, index) => (
+            <div key={index} className="log-entry">
+              <div className="log-time">{formatTime(log.startTimeMs)}</div>
+              <div className="log-message">
+                Passenger {log.clientId} has purchased {log.ticketCount} ticket(s) at desk {log.cashDeskId}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
