@@ -37,8 +37,6 @@ export const GridCell: FC<Props> = ({ currentDragType, x, y, onDrop, item, class
         },
     }));
 
-    const image = 
-
     return (
         <div
             ref={drop}

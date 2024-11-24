@@ -65,7 +65,8 @@ type TrainSimulationResponse = {
 export enum CLIENT_TYPE {
     SOLDIER = '_soldier',
     STUDENT = '_student',
-    WITH_CHILD = '_withChild'
+    WITH_CHILD = '_withChild',
+    DISABLED = '_disabled'
 }
 
 export const ConstructorMap = () => {
