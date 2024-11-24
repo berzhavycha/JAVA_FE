@@ -155,14 +155,15 @@ export const ConstructorMap = () => {
             }
         };
 
+        
         const handleDisconnect = (reason: string) => {
             console.log("Socket disconnected:", reason);
         };
-
+        
         socketInstance.on("new_client", handleNewClient);
         socketInstance.on("cash_desk", handleCashDesk);
         socketInstance.on("disconnect", handleDisconnect);
-
+        
         return () => {
             if (socketInstance) {
                 socketInstance.off("new_client", handleNewClient);
@@ -172,22 +173,31 @@ export const ConstructorMap = () => {
             }
         };
     }, []);
-
+    
+    const [gridDimensions, setGridDimensions] = useState({ width: 0, height: 0 });
+    
     useEffect(() => {
-        if (trainSimulation) {
-            const updatedClients = trainSimulation.cashDesks.flatMap(desk =>
-                desk.clientsQueue.map((client, index) => ({
-                    ...client,
-                    position: {
-                        x: desk.position.x,
-                        y: desk.position.y + index,
-                    },
-                }))
-            );
+        const calculateGridDimensions = () => {
+            const containerWidth = document.querySelector('.map-container')?.clientWidth || 0;
+            const maxGridWidth = Math.min(containerWidth - 64, 1200); // 64px for padding, max width 1200px
+            const cellSize = Math.floor(maxGridWidth / mapWidth);
+            
+            setGridDimensions({
+                width: cellSize * mapWidth,
+                height: cellSize * mapHeight
+            });
+            
+            // Update CSS variables
+            document.documentElement.style.setProperty("--cell-size", `${cellSize}px`);
+            document.documentElement.style.setProperty("--map-width", `${mapWidth}`);
+            document.documentElement.style.setProperty("--map-height", `${mapHeight}`);
+        };
 
-            setClients(updatedClients);
-        }
-    }, [trainSimulation]);
+        calculateGridDimensions();
+        window.addEventListener('resize', calculateGridDimensions);
+        
+        return () => window.removeEventListener('resize', calculateGridDimensions);
+    }, [mapWidth, mapHeight]);
 
     const startSimulation = async () => {
         try {
@@ -287,87 +297,96 @@ export const ConstructorMap = () => {
         <DndProvider backend={HTML5Backend}>
             <div className="map-container">
                 <header className="map-header">
-                    <div className="left">
-                        {isSimulationStarted ?
-                            <Timer /> :
-                            <h1 className="map-title">Construct your map</h1>
-                        }
-                        {!isSimulationStarted && <div className="controls">
-                            <DraggableItem
-                                id={1}
-                                type={DRAG_TYPES.DESK}
-                                icon={<img src={DeskImage} />}
-                                label={'Desk'}
-                                onDragStart={setCurrentDragType}
-                                count={itemCounts[DRAG_TYPES.DESK]}
-                            />
-                            <DraggableItem
-                                id={2}
-                                type={DRAG_TYPES.RESERVED_DESK}
-                                icon={<img src={DeskImage} />}
-                                label={'Reserved Desk'}
-                                onDragStart={setCurrentDragType}
-                                count={itemCounts[DRAG_TYPES.RESERVED_DESK]}
-                            />
-                            <DraggableItem
-                                id={3}
-                                type={DRAG_TYPES.ENTRANCE}
-                                icon={<img src={EntranceImage} />}
-                                label={'Entrance'}
-                                onDragStart={setCurrentDragType}
-                                count={itemCounts[DRAG_TYPES.ENTRANCE]}
-                            />
-                        </div>}
+                    {isSimulationStarted ?
+                        <Timer /> :
+                        <h1 className="map-title">Construct your map</h1>
+                    }
+                    {!isSimulationStarted && <div className="controls">
+                        <DraggableItem
+                            id={1}
+                            type={DRAG_TYPES.DESK}
+                            icon={<img src={DeskImage} />}
+                            label={'Desk'}
+                            onDragStart={setCurrentDragType}
+                            count={itemCounts[DRAG_TYPES.DESK]}
+                        />
+                        <DraggableItem
+                            id={2}
+                            type={DRAG_TYPES.RESERVED_DESK}
+                            icon={<img src={DeskImage} />}
+                            label={'Reserved Desk'}
+                            onDragStart={setCurrentDragType}
+                            count={itemCounts[DRAG_TYPES.RESERVED_DESK]}
+                        />
+                        <DraggableItem
+                            id={3}
+                            type={DRAG_TYPES.ENTRANCE}
+                            icon={<img src={EntranceImage} />}
+                            label={'Entrance'}
+                            onDragStart={setCurrentDragType}
+                            count={itemCounts[DRAG_TYPES.ENTRANCE]}
+                        />
+                    </div>}
+                    <button className="start-button" onClick={isSimulationStarted ? stopSimulation : startSimulation}>
+                        {isSimulationStarted ? 'Stop' : 'Start'} Simulation
+                    </button>
+                    <button className="start-button" onClick={showLogs}>{!isLogsShown ? 'Show' : 'Close'} Logs</button>
+                    {isLogsShown && (
+                        <div className="log-list">
+                            <LogList logs={logs} />
+                        </div>
+                    )}
+                </header>
+
+                <div className="game-area" style={{ width: gridDimensions.width }}>
+                    <div className="drop-area">
+                        <RedRectanglesRow
+                            currentDragType={currentDragType}
+                            dragType={[DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK]}
+                            columnCount={mapWidth}
+                            availableColumns={availableColumns}
+                            onDrop={handleDrop}
+                            gridHeight={mapHeight}
+                        />
                     </div>
-                    <div className="right">
-                        <button className="start-button" onClick={isSimulationStarted ? stopSimulation : startSimulation}>
-                            {isSimulationStarted ? 'Stop' : 'Start'} Simulation
-                        </button>
-                        <button className="start-button" onClick={showLogs}>{!isLogsShown ? 'Show' : 'Close'} Logs</button>
-                        {isLogsShown && (
-                            <div className="log-list">
-                                <LogList logs={logs} />
-                            </div>
+                    
+                    <div 
+                        className="grid-container"
+                        style={{
+                            width: gridDimensions.width,
+                            height: gridDimensions.height
+                        }}
+                    >
+                        {grid.map((row, y) =>
+                            row.map((cell, x) => {
+                                const isManHere = clients.some(
+                                    (pos) => pos.position.x === (x + 1) && pos.position.y === (y + 1)
+                                );
+                                return (
+                                    <GridCell
+                                        key={`${y}-${x}`}
+                                        x={x}
+                                        y={y}
+                                        currentDragType={currentDragType}
+                                        onDrop={handleDrop}
+                                        item={cell}
+                                        placedItem={isManHere}
+                                        className="grid-cell"
+                                    />
+                                );
+                            })
                         )}
                     </div>
-                </header>
-                <div className="drop-area">
+                    
                     <RedRectanglesRow
                         currentDragType={currentDragType}
-                        dragType={[DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK]}
-                        columnCount={20}
-                        availableColumns={availableColumns}
+                        dragType={DRAG_TYPES.ENTRANCE}
+                        columnCount={mapWidth}
+                        gridHeight={mapHeight}
+                        availableColumns={availableEntranceColumns}
                         onDrop={handleDrop}
-                        gridHeight={parseInt(location.state.settings.mapHeight)}
                     />
                 </div>
-                <div className="grid-container">
-                    {grid.map((row, y) =>
-                        row.map((cell, x) => {
-                            const isManHere = clients.some((pos) => pos.position.x === (x + 1) && pos.position.y === (y + 1));
-                            return (
-                                <GridCell
-                                    key={`${y}-${x}`}
-                                    x={x}
-                                    y={y}
-                                    currentDragType={currentDragType}
-                                    onDrop={handleDrop}
-                                    item={cell}
-                                    placedItem={isManHere}
-                                    className="grid-cell"
-                                />
-                            );
-                        })
-                    )}
-                </div>
-                <RedRectanglesRow
-                    currentDragType={currentDragType}
-                    dragType={DRAG_TYPES.ENTRANCE}
-                    columnCount={20}
-                    gridHeight={parseInt(location.state.settings.mapHeight)}
-                    availableColumns={availableEntranceColumns}
-                    onDrop={handleDrop}
-                />
             </div>
         </DndProvider>
     );
