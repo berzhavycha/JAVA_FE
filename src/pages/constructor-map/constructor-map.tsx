@@ -4,7 +4,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "./constructor-map.css";
 import DeskImage from '../../assets/information-desk 2.png';
 import EntranceImage from '../../assets/Entrance.png';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LogList from "../../components/log-list/log-list";
 import { Socket, connect } from "socket.io-client";
 import { DraggableItem } from "./components/draggable-item";
@@ -17,6 +17,7 @@ export const DRAG_TYPES = {
     RESERVED_DESK: "reserved_desk",
     ENTRANCE: "entrance",
 };
+
 
 const SOCKET_URL = "http://localhost:8082";
 
@@ -61,6 +62,12 @@ type TrainSimulationResponse = {
     maxPeopleCount: number;
 }
 
+export enum CLIENT_TYPE {
+    SOLDIER = '_soldier',
+    STUDENT = '_student',
+    WITH_CHILD = '_withChild'
+}
+
 export const ConstructorMap = () => {
     const [currentDragType, setCurrentDragType] = useState("");
     const location = useLocation();
@@ -83,9 +90,10 @@ export const ConstructorMap = () => {
 
     const [deskPositions, setDeskPositions] = useState<{ x: number; y: number }[]>([]);
     const [entrancePositions, setEntrancePositions] = useState<{ x: number; y: number }[]>([]);
-    const [reserveDeskPosition, setReserveDeskPosition] = useState<{ x: number; y: number }>(null);
+    const [reserveDeskPosition, setReserveDeskPosition] = useState<{ x: number; y: number } | null>(null);
 
     console.log(location.state.settings)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const socketInstance = connect(SOCKET_URL);
@@ -241,6 +249,8 @@ export const ConstructorMap = () => {
         if (socket) {
             console.log("Emitting stop_simulation event");
             socket.emit("stop_simulation");
+            navigate('/result-page')
+
             setIsSimulationStarted(false);
         }
     };
@@ -368,7 +378,6 @@ export const ConstructorMap = () => {
                                         x={x}
                                         y={y}
                                         currentDragType={currentDragType}
-                                        onDrop={handleDrop}
                                         item={cell}
                                         placedItem={isManHere}
                                         className="grid-cell"

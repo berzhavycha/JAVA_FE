@@ -18,7 +18,7 @@ export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availa
             newGrid[0][x] = item;
             return newGrid;
         });
-        console.log(currentDragType, DRAG_TYPES, gridHeight)
+
         onDrop(item.type, x, dragType === DRAG_TYPES.ENTRANCE ? gridHeight : 1);
     };
 
