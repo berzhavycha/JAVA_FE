@@ -15,19 +15,19 @@ type Strategy = {
 };
 
 const strategies: Strategy[] = [
-  { id: 1, title: 'Strategy 1', description: 'Description for Strategy 1', image: <img src={Image1}/>, chosen: true },
-  { id: 2, title: 'Strategy 2', description: 'Description for Strategy 2',image: <img src={Image2}/>, chosen: false },
-  { id: 3, title: 'Strategy 3', description: 'Description for Strategy 3',image: <img src={Image3}/>, chosen: false },
+  { id: 1, title: 'Increasing', description: 'Description for Increasing Strategy', image: <img src={Image1}/>, chosen: true },
+  { id: 2, title: 'Equal', description: 'Description for Equal Strategy',image: <img src={Image2}/>, chosen: false },
+  { id: 3, title: 'Random', description: 'Description for Random Strategy',image: <img src={Image3}/>, chosen: false },
 ];
 
 const GlobalStrategy: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation()
 
-  const [selectedStrategy, setSelectedStrategy] = useState<number>(1);
+  const [selectedStrategy, setSelectedStrategy] = useState<string>('Increasing');
 
-  const handleChoose = (id: number) => {
-    setSelectedStrategy(id);
+  const handleChoose = (title: string) => {
+    setSelectedStrategy(title);
   };
 
   const handleBack= () => {
@@ -66,14 +66,14 @@ const GlobalStrategy: React.FC = () => {
           {strategies.map((strategy) => (
             <div
               key={strategy.id}
-              className={`strategy-card ${strategy.id === selectedStrategy ? 'chosen' : ''}`}
-              onClick={() => handleChoose(strategy.id)}
+              className={`strategy-card ${strategy.title === selectedStrategy ? 'chosen' : ''}`}
+              onClick={() => handleChoose(strategy.title)}
             >
               <h2 className="csp-strategy-title">{strategy.title}</h2>
               {strategy.image}
               <p className="strategy-description">{strategy.description}</p>
               <button className="choose-button">
-                {strategy.id === selectedStrategy ? 'Chosen ✔️' : 'Choose ✖️'}
+                {strategy.title === selectedStrategy ? 'Chosen ✔️' : 'Choose ✖️'}
               </button>
             </div>
           ))}

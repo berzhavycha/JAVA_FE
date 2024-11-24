@@ -1,15 +1,18 @@
-import { FC, useEffect, useState } from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { useEffect, useState } from "react";
+import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "./constructor-map.css";
 import DeskImage from '../../assets/information-desk 2.png';
 import EntranceImage from '../../assets/Entrance.png';
 import { useLocation } from "react-router-dom";
 import LogList from "../../components/log-list/log-list";
-import StandingManImage from '../../assets/standing-up-man- 4.png'
 import { Socket, connect } from "socket.io-client";
+import { DraggableItem } from "./components/draggable-item";
+import { GridCell } from "./components/grid-cell";
+import { RedRectanglesRow } from "./components/red-rectangle-row";
+import { Timer } from "./components/timer";
 
-const DRAG_TYPES = {
+export const DRAG_TYPES = {
     DESK: "desk",
     RESERVED_DESK: "reserved_desk",
     ENTRANCE: "entrance",
@@ -17,161 +20,53 @@ const DRAG_TYPES = {
 
 const SOCKET_URL = "http://localhost:8082";
 
-// const socket = io(SOCKET_URL);
+type Client = {
+    id: number;
+    position: {
+        x: number;
+        y: number;
+    },
+    ticketNumber: number;
+    priority: number;
+    type: 'string'
+}
 
-const DraggableItem = ({ id, type, label, onDragStart, count }) => {
-    const [{ isDragging }, drag] = useDrag(() => ({
-        type,
-        item: () => {
-            if (count > 0) {
-                onDragStart(type);
-                return { id, type };
-            }
-            return null;
-        },
-        canDrag: () => count > 0,
-        collect: (monitor) => ({
-            isDragging: !!monitor.isDragging(),
-        }),
-        end: () => onDragStart(""),
-    }));
+type CashDesk = {
+    id: number;
+    position: {
+        x: number;
+        y: number;
+    }
+    clientsQueue: Client[];
+    backup: boolean;
+    broken: boolean;
+}
 
-    return (
-        <div className="draggable-item-container">
-            <div
-                ref={drag}
-                className={`draggable-item ${count === 0 ? 'disabled' : ''}`}
-                style={{
-                    opacity: isDragging ? 0.5 : count > 0 ? 1 : 0.5,
-                    cursor: count > 0 ? "move" : "not-allowed",
-                    pointerEvents: count > 0 ? "auto" : "none",
-                }}
-            >
-                {label}
-                <span className="item-counter">{count}</span>
-            </div>
-        </div>
-    );
-};
+type Entrance = {
+    position: {
+        x: number;
+        y: number;
+    }
+}
 
-const GridCell = ({ currentDragType, x, onDrop, item, className, placedItem }) => {
-    const [{ isOver, canDrop }, drop] = useDrop(() => ({
-        accept: [DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK, DRAG_TYPES.ENTRANCE],
-        drop: (draggedItem) => {
-            if (draggedItem) {
-                onDrop(draggedItem, x);
-            }
-        },
-        collect: (monitor) => {
-            return ({
-                isOver: !!monitor.isOver(),
-                canDrop: !!monitor.canDrop() && monitor.getItem() !== null && monitor.getItem().type === currentDragType,
-            })
-        },
-    }));
+type BuildingMap = {
+    sizeX: number;
+    sizeY: number;
+}
 
-
-    return (
-        <div
-            ref={drop}
-            className={`grid-cell ${isOver ? "hovered" : ""} ${canDrop ? "droppable" : ""} ${className}`}
-        >
-            {item && (
-                <img
-                    src={item.type === DRAG_TYPES.DESK || item.type === DRAG_TYPES.RESERVED_DESK ? DeskImage : EntranceImage}
-                    alt={item.type}
-                />
-            )}
-            {placedItem && <img src={StandingManImage} alt="Standing Man" className="standing-man" />}
-        </div>
-    );
-};
-
-const RedRectanglesRow = ({ currentDragType, dragType, columnCount, availableColumns, onDrop }: {
-    currentDragType: string,
-    dragType: string | string[],
-    columnCount: number;
-    availableColumns: number[];
-    onDrop: (type: string) => void;
-}) => {
-    const [grid, setGrid] = useState(Array.from({ length: 20 }, () => Array(20).fill(null)));
-
-    const handleDrop = (item, x) => {
-        setGrid((prevGrid) => {
-            const newGrid = prevGrid.map((row) => [...row]);
-            newGrid[0][x] = item;
-            return newGrid;
-        });
-        onDrop(item.type);
-    };
-
-    return (
-        <>
-            <div className="desk-grid">
-                {grid[0].map((cell, x) => {
-                    const isAvailable = availableColumns.includes(x);
-                    return isAvailable ? (
-                        <GridCell
-                            currentDragType={currentDragType}
-                            key={`${x}`}
-                            x={x}
-                            onDrop={handleDrop}
-                            item={cell}
-                            className={`desk-grid-cell`}
-                        />
-                    ) : (
-                        <div key={`${x}`} className="unavailable-grid-cell"></div>
-                    );
-                })}
-            </div>
-        </>
-    );
-};
-
-const Timer = () => {
-    const [time, setTime] = useState(() => {
-        const now = new Date();
-        return {
-            hours: now.getHours(),
-            minutes: now.getMinutes(),
-            seconds: now.getSeconds(),
-        };
-    });
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const now = new Date();
-            setTime({
-                hours: now.getHours(),
-                minutes: now.getMinutes(),
-                seconds: now.getSeconds(),
-            });
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    const formatTime = (unit) => String(unit).padStart(2, "0");
-
-    return (
-        <div className="timer">
-            <span className="timer-time">
-                {formatTime(time.hours)}:{formatTime(time.minutes)}:
-                {formatTime(time.seconds)}
-            </span>
-        </div>
-    );
-};
-
+type TrainSimulationResponse = {
+    cashDesks: CashDesk[],
+    entrances: Entrance[],
+    buildingMap: BuildingMap;
+    maxPeopleCount: number;
+}
 
 export const ConstructorMap = () => {
     const [currentDragType, setCurrentDragType] = useState("");
     const location = useLocation();
-    const [manPositions, setManPositions] = useState([
-        // { x: 3, y: 2 },
-        // { x: 5, y: 6 },
-    ]);
-    const [socketLogs, setSocketLogs] = useState<string[]>([]);
+    const [trainSimulation, setTrainSimulation] = useState<TrainSimulationResponse | null>(null);
+    const [clients, setClients] = useState<Client[]>([])
+    const [logs, setLogs] = useState<any[]>([]);
 
     const mapWidth = parseInt(location.state.settings.mapWidth);
     const mapHeight = parseInt(location.state.settings.mapHeight);
@@ -186,7 +81,11 @@ export const ConstructorMap = () => {
     const [isLogsShown, setIsLogShown] = useState<boolean>(false)
     const [socket, setSocket] = useState<Socket | null>(null);
 
-    console.log('render')
+    const [deskPositions, setDeskPositions] = useState<{ x: number; y: number }[]>([]);
+    const [entrancePositions, setEntrancePositions] = useState<{ x: number; y: number }[]>([]);
+    const [reservedDeskPositions, setReservedDeskPosition] = useState<{ x: number; y: number } | null>(null);
+
+    console.log(location.state.settings)
 
     useEffect(() => {
         const socketInstance = connect(SOCKET_URL);
@@ -197,20 +96,85 @@ export const ConstructorMap = () => {
             console.log('connect')
         });
 
-        // Event Listeners
-        const handleNewClient = (data: any) => {
+        const handleNewClient = async (data: any) => {
             console.log("New client event received:", data);
-            setSocketLogs((prev) => [...prev, `New client: ${JSON.stringify(data)}`]);
+
+            setClients((prev) => [...prev, data]);
+
+            try {
+                const response = await fetch("http://localhost:8080/simulation/trainStation", {
+                    method: "GET",
+                });
+                const simulationData: TrainSimulationResponse = await response.json();
+                console.log("Simulation API response:", simulationData);
+
+                setTimeout(() => {
+                    setTrainSimulation(simulationData);
+                }, 1000)
+            } catch (error) {
+                console.error("Error fetching simulation data:", error);
+            }
         };
 
-        const handleCashDesk = (data: any) => {
+        const handleCashDesk = async (data: CashDesk) => {
             console.log("Cash desk event received:", data);
-            setSocketLogs((prev) => [...prev, `Cash desk update: ${JSON.stringify(data)}`]);
+
+            try {
+                await fetch("http://localhost:8080/settings", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        deskPositions,
+                        entrancePositions,
+                        reservedDeskPositions,
+                        minServiceTime: location.state.settings.minServiceTime,
+                        maxServiceTime: location.state.settings.minServiceTime,
+                        maxClientNumber: location.state.settings.maxClient,
+                        stationWidth:  location.state.settings.maxWidth,
+                        stationHeight:  location.state.settings.maxHeight,
+                        clientGenerator: {
+                            generatorType: location.state.settings.selectedStrategy
+                        },
+                    }),
+                });
+
+                const response = await fetch("http://localhost:8080/simulation/trainStation", {
+                    method: "GET",
+                });
+
+                const simulationData: TrainSimulationResponse = await response.json();
+                console.log("Simulation API response:", simulationData);
+                console.log("Cash desk event received:", data);
+
+                setClients(clients => [...clients].map(client => {
+                    const previousCashDeskData = trainSimulation?.cashDesks.find(desk => desk.id === data.id);
+
+                    if (previousCashDeskData) {
+                        const previousQueue = previousCashDeskData.clientsQueue;
+                        const currentQueue = data.clientsQueue;
+
+                        const handledClient = previousQueue.find(client =>
+                            !currentQueue.some(newClient => newClient.id === client.id)
+                        );
+
+                        if (handledClient) {
+                            return handledClient
+                        }
+                    }
+
+                    return client;
+                }));
+
+                setTimeout(() => {
+                    setTrainSimulation(simulationData);
+                }, 1000)
+            } catch (error) {
+                console.error("Error fetching simulation data:", error);
+            }
         };
 
         const handleDisconnect = (reason: string) => {
             console.log("Socket disconnected:", reason);
-            setSocketLogs((prev) => [...prev, `Disconnected: ${reason}`]);
         };
 
         socketInstance.on("new_client", handleNewClient);
@@ -227,37 +191,49 @@ export const ConstructorMap = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if (trainSimulation) {
+            const updatedClients = trainSimulation.cashDesks.flatMap(desk =>
+                desk.clientsQueue.map((client, index) => ({
+                    ...client,
+                    position: {
+                        x: desk.position.x,
+                        y: desk.position.y + index,
+                    },
+                }))
+            );
+
+            setClients(updatedClients);
+        }
+    }, [trainSimulation]);
+
+
     const startSimulation = async () => {
         try {
-            
+
             if (!isSimulationStarted) {
-                const response = await fetch('http://localhost:8080/simulation/trainStation', {
+                await fetch('http://localhost:8080/simulation/trainStation', {
                     method: "POST"
                 });
-                const data = await response.json();
-                console.log("Simulation API response:", data);
-                setSocketLogs(prev => [...prev, `API Response: ${JSON.stringify(data)}`]);
             }
+
             if (socket) {
                 console.log("Emitting start_simulation event");
                 socket.emit("start_simulation");
-                setSocketLogs(prev => [...prev, "Simulation started"]);
                 setIsSimulationStarted(true);
             }
 
         } catch (error) {
             console.error("Error in startSimulation:", error);
-            // setSocketLogs(prev => [...prev, `Error starting simulation: ${error.message}`]);
         }
     };
 
     const stopSimulation = () => {
-        // if (socket) {
-        //     console.log("Emitting stop_simulation event");
-        //     socket.emit("stop_simulation");
-        //     setSocketLogs(prev => [...prev, "Simulation stopped"]);
-        //     setIsSimulationStarted(false);
-        // }
+        if (socket) {
+            console.log("Emitting stop_simulation event");
+            socket.emit("stop_simulation");
+            setIsSimulationStarted(false);
+        }
     };
 
     const [grid, setGrid] = useState(
@@ -278,14 +254,33 @@ export const ConstructorMap = () => {
     const availableColumns = generateAvailableColumns(mapWidth, [5, 6]);
     const availableEntranceColumns = generateAvailableColumns(mapWidth, [5, 6]);
 
-    const handleDrop = (itemType) => {
+    const handleDrop = (itemType: string, x: number, y: number) => {
+        if (itemType === DRAG_TYPES.DESK) {
+            setDeskPositions((prev) => [...prev, { x, y }]);
+        } else if (itemType === DRAG_TYPES.ENTRANCE) {
+            setEntrancePositions((prev) => [...prev, { x, y }]);
+        } else if (itemType === DRAG_TYPES.RESERVED_DESK) {
+            setReservedDeskPosition({ x, y });
+        }
+
         setItemCounts((prev) => ({
             ...prev,
             [itemType]: Math.max(0, prev[itemType] - 1),
         }));
     };
 
+    const fetchLogs = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/order/log");
+            const logsData = await response.json();
+            setLogs(logsData);
+        } catch (error) {
+            console.error("Error fetching logs:", error);
+        }
+    };
+
     const showLogs = () => {
+        fetchLogs();
         setIsLogShown(prev => !prev)
     }
 
@@ -323,10 +318,10 @@ export const ConstructorMap = () => {
                     <button className="start-button" onClick={isSimulationStarted ? stopSimulation : startSimulation}>
                         {isSimulationStarted ? 'Stop' : 'Start'} Simulation
                     </button>
-                    <button className="start-button" onClick={showLogs}>Show Logs</button>
+                    <button className="start-button" onClick={showLogs}>{!isLogsShown ? 'Show' : 'Close'} Logs</button>
                     {isLogsShown && (
                         <div className="log-list">
-                            <LogList logs={socketLogs} />
+                            <LogList logs={logs} />
                         </div>
                     )}
                 </header>
@@ -340,7 +335,7 @@ export const ConstructorMap = () => {
                 <div className="grid-container">
                     {grid.map((row, y) =>
                         row.map((cell, x) => {
-                            const isManHere = manPositions.some((pos) => pos.x === x && pos.y === y);
+                            const isManHere = clients.some((pos) => pos.position.x === (x + 1) && pos.position.y === (y + 1));
                             return (
                                 <GridCell
                                     key={`${y}-${x}`}
