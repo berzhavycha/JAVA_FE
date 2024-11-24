@@ -12,29 +12,19 @@ const BackIcon = () => (
 type FieldName = 'mapWidth' | 'mapHeight' | 'desks' | 'entrances' | 
     'minServiceTime' | 'maxServiceTime' | 'maxClientNumber';
 
-// interface Settings {
-//     mapWidth: string;
-//     mapHeight: string;
-//     desks: string;
-//     entrances: string;
-//     minServiceTime: string;
-//     maxServiceTime: string;
-//     maxClients: string;
-// } entity to be received from back
-
 type FormErrors = Partial<Record<FieldName, string>>;
 
 export const GlobalStrategyForm: React.FC = () => {
     const navigate = useNavigate();
 
     const [settings, setSettings] = useState({
-        mapWidth: '10',          // Valid: between 5 and 100
-        mapHeight: '10',         // Valid: between 5 and 100
-        desks: '5',             // Valid: between 1 and 20
-        entrances: '2',         // Valid: between 1 and 10
-        minServiceTime: '4000',    // Valid: >= 1 and < maxServiceTime
-        maxServiceTime: '5000',   // Valid: > minServiceTime and <= 60
-        maxClientNumber: '10'      // Valid: between 1 and 10000
+        mapWidth: '10',
+        mapHeight: '10',
+        desks: '5',
+        entrances: '2',
+        minServiceTime: '4000',
+        maxServiceTime: '5000',
+        maxClientNumber: '10'
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
@@ -49,67 +39,89 @@ export const GlobalStrategyForm: React.FC = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const validateField = (name: FieldName, value: string): string => {
+    const validateField = (name: FieldName, value: string, allSettings = settings): string => {
         const numberValue = Number(value);
+        const mapSide = Number(allSettings.mapWidth);
         
         switch (name) {
-            case 'mapWidth':
+            case 'mapWidth': {
                 if (!value.trim()) return 'Map width is required';
                 if (isNaN(numberValue)) return 'Must be a number';
                 if (numberValue < 5) return 'Minimum width is 5';
                 if (numberValue > 100) return 'Maximum width is 100';
+                if (numberValue !== Number(allSettings.mapHeight)) {
+                    return 'Map must be square (width must equal height)';
+                }
                 break;
+            }
             
-            case 'mapHeight':
+            case 'mapHeight': {
                 if (!value.trim()) return 'Map height is required';
                 if (isNaN(numberValue)) return 'Must be a number';
                 if (numberValue < 5) return 'Minimum height is 5';
                 if (numberValue > 100) return 'Maximum height is 100';
+                if (numberValue !== Number(allSettings.mapWidth)) {
+                    return 'Map must be square (height must equal width)';
+                }
                 break;
+            }
             
-            case 'desks':
+            case 'desks': {
                 if (!value.trim()) return 'Number of desks is required';
                 if (isNaN(numberValue)) return 'Must be a number';
                 if (numberValue < 1) return 'Minimum 1 desk required';
-                if (numberValue > 20) return 'Maximum 20 desks allowed';
+                const maxDesks = Math.floor(mapSide / 2);
+                if (numberValue > maxDesks) {
+                    return `Maximum ${maxDesks} desks allowed (half of map side)`;
+                }
                 break;
+            }
             
-            case 'entrances':
+            case 'entrances': {
                 if (!value.trim()) return 'Number of entrances is required';
                 if (isNaN(numberValue)) return 'Must be a number';
                 if (numberValue < 1) return 'Minimum 1 entrance required';
-                if (numberValue > 10) return 'Maximum 10 entrances allowed';
+                const maxEntrances = Math.floor(mapSide / 2);
+                if (numberValue > maxEntrances) {
+                    return `Maximum ${maxEntrances} entrances allowed (half of map side)`;
+                }
                 break;
+            }
             
-            case 'minServiceTime':
+            case 'minServiceTime': {
                 if (!value.trim()) return 'Minimum service time is required';
                 if (isNaN(numberValue)) return 'Must be a number';
-                if (numberValue < 1) return 'Minimum time is 1 minute';
-                if (numberValue > Number(settings.maxServiceTime)) return 'Must be less than max service time';
+                if (numberValue < 1) return 'Minimum time is 1';
+                if (numberValue >= Number(allSettings.maxServiceTime)) {
+                    return 'Must be less than max service time';
+                }
                 break;
+            }
             
-            case 'maxServiceTime':
+            case 'maxServiceTime': {
                 if (!value.trim()) return 'Maximum service time is required';
                 if (isNaN(numberValue)) return 'Must be a number';
-                if (numberValue < Number(settings.minServiceTime)) return 'Must be greater than min service time';
+                if (numberValue <= Number(allSettings.minServiceTime)) {
+                    return 'Must be greater than min service time';
+                }
                 break;
+            }
             
-            case 'maxClientNumber':
+            case 'maxClientNumber': {
                 if (!value.trim()) return 'Maximum clients is required';
                 if (isNaN(numberValue)) return 'Must be a number';
                 if (numberValue < 1) return 'Minimum 1 client required';
                 if (numberValue > 10000) return 'Maximum 10000 clients allowed';
                 break;
+            }
         }
         return '';
     };
 
-    const [isFormValid, setIsFormValid] = useState(true);
-
-    const validateForm = () => {
+    const validateForm = (currentSettings = settings) => {
         const newErrors: FormErrors = {};
-        (Object.keys(settings) as FieldName[]).forEach(key => {
-            const error = validateField(key, settings[key]);
+        (Object.keys(currentSettings) as FieldName[]).forEach(key => {
+            const error = validateField(key, currentSettings[key], currentSettings);
             if (error) newErrors[key] = error;
         });
         return {
@@ -118,6 +130,8 @@ export const GlobalStrategyForm: React.FC = () => {
         };
     };
 
+    const [isFormValid, setIsFormValid] = useState(true);
+
     useEffect(() => {
         const { isValid } = validateForm();
         setIsFormValid(isValid);
@@ -125,26 +139,40 @@ export const GlobalStrategyForm: React.FC = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setSettings(prev => ({ ...prev, [name]: value }));
+        let updatedSettings = { ...settings, [name]: value };
         
-        const error = validateField(name as FieldName, value);
-        const newErrors = { ...errors, [name]: error };
+        // If changing width or height, ensure square map
+        if (name === 'mapWidth') {
+            updatedSettings = { ...updatedSettings, mapHeight: value };
+        } else if (name === 'mapHeight') {
+            updatedSettings = { ...updatedSettings, mapWidth: value };
+        }
+        
+        // Validate all dependent fields when map size changes
+        const { errors: newErrors } = validateForm(updatedSettings);
+        
+        setSettings(updatedSettings);
         setErrors(newErrors);
+        setIsFormValid(Object.keys(newErrors).length === 0);
         
-        setIsFormValid(Object.values(newErrors).every(error => !error));
+        // Mark changed field as touched
+        setTouched(prev => ({ ...prev, [name]: true }));
     };
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         const { name } = e.target;
         setTouched(prev => ({ ...prev, [name]: true }));
+        
+        // Revalidate on blur to ensure all dependent validations are current
+        const { errors: newErrors } = validateForm();
+        setErrors(newErrors);
     };
-
+    
     const handleSave = async () => {
         setIsSubmitting(true);
         const { errors: formErrors, isValid } = validateForm();
 
         if (isValid) {
-            // Transform form data to API request body
             const deskCount = Number(settings.desks);
             const entranceCount = Number(settings.entrances);
             const requestBody = {
@@ -158,7 +186,6 @@ export const GlobalStrategyForm: React.FC = () => {
                 stationWidth: Number(settings.mapWidth),
                 stationHeight: Number(settings.mapHeight),
             };
-
 
             navigate("/choose-strategy-page", {
                 state: {
@@ -175,7 +202,6 @@ export const GlobalStrategyForm: React.FC = () => {
         }
         setIsSubmitting(false);
     };
-
 
     const handleBack = () => {
         navigate("/");
@@ -232,6 +258,7 @@ export const GlobalStrategyForm: React.FC = () => {
                         </div>
                     </div>
 
+                    {/* Rest of the JSX remains the same... */}
                     <div className="setting-group">
                         <div className="setting-group-inner">
                             <div className="setting-group-item">
