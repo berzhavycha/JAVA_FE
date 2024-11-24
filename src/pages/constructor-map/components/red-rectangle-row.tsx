@@ -18,8 +18,6 @@ export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availa
             return newGrid;
         });
 
-        console.log('call')
-
         onDrop(item.type, x, dragType === DRAG_TYPES.ENTRANCE ? gridHeight : 1);
     };
 
@@ -35,11 +33,7 @@ export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availa
                             key={`${x}`}
                             x={x}
                             y={currentDragType === DRAG_TYPES.ENTRANCE ? gridHeight : 1}
-                            onDrop={(item, x, currentType = 'optional', type = 'optional') => {
-                                if(Array.isArray(dragType) && dragType.includes(currentDragType) || dragType === currentDragType) {
-                                    handleDrop(item, x)
-                                }
-                            }}
+                            onDrop={handleDrop}
                             item={cell}
                             className={`desk-grid-cell`}
                         />
