@@ -86,6 +86,21 @@ export const ConstructorMap = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
+        if (trainSimulation) {
+            const updatedClients = trainSimulation.cashDesks.flatMap(desk =>
+                desk.clientsQueue.map((client, index) => ({
+                    ...client,
+                    position: {
+                        x: desk.position.x,
+                        y: desk.position.y + index,
+                    },
+                }))
+            );
+            setClients(updatedClients);
+        }
+    }, [trainSimulation]);
+
+    useEffect(() => {
         const socketInstance = connect(SOCKET_URL);
 
         setSocket(socketInstance);
@@ -337,7 +352,6 @@ export const ConstructorMap = () => {
                         </div>
                     )}
                 </header>
-
                 <div className="game-area" style={{ width: gridDimensions.width }}>
                     <div className="drop-area">
                         <RedRectanglesRow
@@ -359,9 +373,11 @@ export const ConstructorMap = () => {
                     >
                         {grid.map((row, y) =>
                             row.map((cell, x) => {
-                                const isManHere = clients.some(
+                                const client = clients.find(
                                     (pos) => pos.position.x === (x + 1) && pos.position.y === (y + 1)
                                 );
+
+
                                 return (
                                     <GridCell
                                         key={`${y}-${x}`}
@@ -369,14 +385,13 @@ export const ConstructorMap = () => {
                                         y={y}
                                         currentDragType={currentDragType}
                                         item={cell}
-                                        placedItem={isManHere}
+                                        placedItem={client}
                                         className="grid-cell"
                                     />
                                 );
                             })
                         )}
                     </div>
-                    
                     <RedRectanglesRow
                         currentDragType={currentDragType}
                         dragType={DRAG_TYPES.ENTRANCE}

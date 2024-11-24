@@ -1,8 +1,8 @@
 import { useDrop } from "react-dnd";
 import { FC } from "react";
-import DeskImage from '../../../assets/information-desk 2.png';
-import EntranceImage from '../../../assets/Entrance.png';
-import StandingManImage from '../../../assets/standing-up-man- 4.png'
+import DeskImage from "../../../assets/information-desk 2.png";
+import EntranceImage from "../../../assets/Entrance.png";
+import { PersonIcon } from "../../../components/person-icon/person-icon";
 
 type Props = {
     currentDragType: string;
@@ -12,7 +12,7 @@ type Props = {
     item: any;
     placedItem?: any;
     className?: string;
-}
+};
 
 export const DRAG_TYPES = {
     DESK: "desk",
@@ -21,19 +21,28 @@ export const DRAG_TYPES = {
 };
 
 export enum CLIENT_TYPE {
-    SOLDIER = '_soldier',
-    STUDENT = '_student',
-    WITH_CHILD = '_withChild',
-    DISABLED = '_disabled'
+    SOLDIER = "_soldier",
+    STUDENT = "_student",
+    WITH_CHILD = "_withChild",
+    DISABLED = "_disabled",
 }
 
-const PersonColorMapper = {
-    [CLIENT_TYPE.SOLDIER]: 'green',
-    [CLIENT_TYPE.STUDENT]: 'yellow',
-    [CLIENT_TYPE.WITH_CHILD]: 'blue',
-}
+const parseClientTypes = (type: string): CLIENT_TYPE[] => {
+    const parts = type
+        .split("_")
+        .slice(1); 
+    return parts.map((part) => `_${part}` as CLIENT_TYPE);
+};
 
-export const GridCell: FC<Props> = ({ currentDragType, x, y, onDrop, item, className, placedItem }) => {
+export const GridCell: FC<Props> = ({
+    currentDragType,
+    x,
+    y,
+    onDrop,
+    item,
+    className,
+    placedItem,
+}) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK, DRAG_TYPES.ENTRANCE],
         drop: (draggedItem) => {
@@ -41,26 +50,35 @@ export const GridCell: FC<Props> = ({ currentDragType, x, y, onDrop, item, class
                 onDrop(draggedItem, x, y);
             }
         },
-        collect: (monitor) => {
-            return ({
-                isOver: !!monitor.isOver(),
-                canDrop: !!monitor.canDrop() && monitor.getItem() !== null && monitor.getItem().type === currentDragType,
-            })
-        },
+        collect: (monitor) => ({
+            isOver: !!monitor.isOver(),
+            canDrop:
+                !!monitor.canDrop() &&
+                monitor.getItem() !== null &&
+                monitor.getItem().type === currentDragType,
+        }),
     }));
 
     return (
         <div
             ref={drop}
-            className={`grid-cell ${isOver ? "hovered" : ""} ${canDrop ? "droppable" : ""} ${className}`}
+            className={`grid-cell ${isOver ? "hovered" : ""} ${canDrop ? "droppable" : ""
+                } ${className}`}
         >
             {item && (
                 <img
-                    src={item.type === DRAG_TYPES.DESK || item.type === DRAG_TYPES.RESERVED_DESK ? DeskImage : EntranceImage}
+                    src={
+                        item.type === DRAG_TYPES.DESK ||
+                            item.type === DRAG_TYPES.RESERVED_DESK
+                            ? DeskImage
+                            : EntranceImage
+                    }
                     alt={item.type}
                 />
             )}
-            {placedItem && <img src={StandingManImage} alt="Standing Man" className="standing-man" />}
+            {placedItem && (
+                <PersonIcon types={parseClientTypes(placedItem.type)} />
+            )}
         </div>
     );
 };
