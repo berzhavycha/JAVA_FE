@@ -13,6 +13,7 @@ type Props = {
     placedItem?: any;
     className?: string;
     isBroken?: boolean;
+    isBackUp?: boolean;
 };
 
 export const DRAG_TYPES = {
@@ -35,6 +36,7 @@ export const GridCell: React.FC<Props> = ({
     className,
     placedItem,
     isBroken,
+    isBackUp,
 }) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK, DRAG_TYPES.ENTRANCE],
@@ -52,6 +54,8 @@ export const GridCell: React.FC<Props> = ({
         }),
     }));
 
+    const showLabel = isBroken || item?.type === DRAG_TYPES.RESERVED_DESK;
+
     const isDesk = item && (item.type === DRAG_TYPES.DESK || item.type === DRAG_TYPES.RESERVED_DESK);
 
     return (
@@ -59,16 +63,16 @@ export const GridCell: React.FC<Props> = ({
             ref={drop}
             className={`grid-cell ${isOver ? "hovered" : ""} ${canDrop ? "droppable" : ""} ${className}`}
         >
-            {isDesk && (
+            {isDesk && showLabel && (
                 <div
                     className="desk-label"
                     style={{
-                        color: isBroken ? 'red' : 'green',
+                        color: 'red',
                         fontSize: 'calc(var(--cell-size) * 0.15)', 
                         fontWeight: `calc(200 + (var(--cell-size) * 0.1))`,
                     }}
                 >
-                    {isBroken ? 'Broken' : 'Operational'}
+                    {isBroken ? 'Broken' : 'Reserved'}
                 </div>
             )}
             {item && (

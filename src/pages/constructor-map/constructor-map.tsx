@@ -280,12 +280,11 @@ export const ConstructorMap = () => {
     }, [mapWidth, mapHeight]);
 
     const generateAvailableColumns = (width: number, skip: number[]) => {
-        const skipSet = new Set(skip); // Optimize lookup
+        const skipSet = new Set(skip);
         return Array.from({ length: width }, (_, index) =>
             skipSet.has(index) ? null : index
-        ).filter((x): x is number => x !== null); // Ensure no null values
+        ).filter((x): x is number => x !== null);
     };
-
 
     const unavailableColumnsCopy = [...unavailableColumns];
     const availableColumns = generateAvailableColumns(mapWidth, unavailableColumnsCopy);
@@ -404,6 +403,7 @@ export const ConstructorMap = () => {
                                         placedItem={client}
                                         className="grid-cell"
                                         isBroken={cell?.broken}
+                                        isBackUp={cell?.backup}
                                     />
                                 );
                             })
