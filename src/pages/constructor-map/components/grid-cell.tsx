@@ -84,8 +84,9 @@ export const GridCell: React.FC<Props> = ({
                     }
                     alt={item.type}
                     style={{
-                        width: '80%',
-                        height: 'auto',
+                        width: isDesk ? '80%' : '100%', // Full width for entrance
+                        height: isDesk ? 'auto' : '100%', // Full height for entrance
+                        objectFit: 'cover',
                     }}
                 />
             )}
