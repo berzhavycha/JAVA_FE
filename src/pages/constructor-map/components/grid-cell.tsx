@@ -8,18 +8,19 @@ import StandingManImage from '../../../assets/standing-up-man- 4.png'
 type Props = {
     currentDragType: string;
     x: number;
-    onDrop: (draggedItem: unknown, x: number) => void;
+    y: number;
+    onDrop: (draggedItem: unknown, x: number, y: number) => void;
     item: any;
-    placedItem: any;
+    placedItem?: any;
     className?: string;
 }
 
-export const GridCell: FC<Props> = ({ currentDragType, x, onDrop, item, className, placedItem }) => {
+export const GridCell: FC<Props> = ({ currentDragType, x, y, onDrop, item, className, placedItem }) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK, DRAG_TYPES.ENTRANCE],
         drop: (draggedItem) => {
             if (draggedItem) {
-                onDrop(draggedItem, x);
+                onDrop(draggedItem, x, y);
             }
         },
         collect: (monitor) => {

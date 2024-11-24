@@ -15,9 +15,9 @@ type Strategy = {
 };
 
 const strategies: Strategy[] = [
-  { id: 1, title: 'Increasing', description: 'Description for Increasing Strategy', image: <img src={Image1}/>, chosen: true },
-  { id: 2, title: 'Equal', description: 'Description for Equal Strategy',image: <img src={Image2}/>, chosen: false },
-  { id: 3, title: 'Random', description: 'Description for Random Strategy',image: <img src={Image3}/>, chosen: false },
+  { id: 1, title: 'Increasing', description: 'Description for Increasing Strategy', image: <img src={Image3}/>, chosen: true },
+  { id: 2, title: 'Equal', description: 'Description for Equal Strategy',image: <img src={Image1}/>, chosen: false },
+  { id: 3, title: 'Random', description: 'Description for Random Strategy',image: <img src={Image2}/>, chosen: false },
 ];
 
 const GlobalStrategy: React.FC = () => {

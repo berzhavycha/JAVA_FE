@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { GridCell } from "./grid-cell";
+import { DRAG_TYPES } from "../constructor-map";
 
-export const RedRectanglesRow = ({ currentDragType, availableColumns, onDrop }: {
+export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availableColumns, onDrop }: {
     currentDragType: string,
+    gridHeight: number,
     dragType: string | string[],
     columnCount: number;
     availableColumns: number[];
-    onDrop: (type: string) => void;
+    onDrop: (type: string, x: number, y: number) => void;
 }) => {
     const [grid, setGrid] = useState(Array.from({ length: 20 }, () => Array(20).fill(null)));
 
@@ -16,7 +18,8 @@ export const RedRectanglesRow = ({ currentDragType, availableColumns, onDrop }: 
             newGrid[0][x] = item;
             return newGrid;
         });
-        onDrop(item.type);
+        console.log(currentDragType, DRAG_TYPES, gridHeight)
+        onDrop(item.type, x, dragType === DRAG_TYPES.ENTRANCE ? gridHeight : 1);
     };
 
     return (
@@ -29,6 +32,7 @@ export const RedRectanglesRow = ({ currentDragType, availableColumns, onDrop }: 
                             currentDragType={currentDragType}
                             key={`${x}`}
                             x={x}
+                            y={currentDragType === DRAG_TYPES.ENTRANCE ? gridHeight : 1}
                             onDrop={handleDrop}
                             item={cell}
                             className={`desk-grid-cell`}

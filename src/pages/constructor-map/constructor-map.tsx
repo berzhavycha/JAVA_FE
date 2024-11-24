@@ -76,14 +76,14 @@ export const ConstructorMap = () => {
     const [itemCounts, setItemCounts] = useState({
         [DRAG_TYPES.DESK]: parseInt(location.state.settings.desks),
         [DRAG_TYPES.ENTRANCE]: parseInt(location.state.settings.entrances),
-        [DRAG_TYPES.RESERVED_DESK]: 3,
+        [DRAG_TYPES.RESERVED_DESK]: 1,
     });
     const [isLogsShown, setIsLogShown] = useState<boolean>(false)
     const [socket, setSocket] = useState<Socket | null>(null);
 
     const [deskPositions, setDeskPositions] = useState<{ x: number; y: number }[]>([]);
     const [entrancePositions, setEntrancePositions] = useState<{ x: number; y: number }[]>([]);
-    const [reservedDeskPositions, setReservedDeskPosition] = useState<{ x: number; y: number } | null>(null);
+    const [reserveDeskPosition, setReserveDeskPosition] = useState<{ x: number; y: number }>(null);
 
     console.log(location.state.settings)
 
@@ -120,24 +120,6 @@ export const ConstructorMap = () => {
             console.log("Cash desk event received:", data);
 
             try {
-                await fetch("http://localhost:8080/settings", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        deskPositions,
-                        entrancePositions,
-                        reservedDeskPositions,
-                        minServiceTime: location.state.settings.minServiceTime,
-                        maxServiceTime: location.state.settings.minServiceTime,
-                        maxClientNumber: location.state.settings.maxClient,
-                        stationWidth:  location.state.settings.maxWidth,
-                        stationHeight:  location.state.settings.maxHeight,
-                        clientGenerator: {
-                            generatorType: (location.state.settings.selectedStrategy as string).toLowerCase()
-                        },
-                    }),
-                });
-
                 const response = await fetch("http://localhost:8080/simulation/trainStation", {
                     method: "GET",
                 });
@@ -207,11 +189,30 @@ export const ConstructorMap = () => {
         }
     }, [trainSimulation]);
 
+    console.log(location.state)
 
     const startSimulation = async () => {
         try {
 
             if (!isSimulationStarted) {
+                await fetch("http://localhost:8080/settings", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        deskPositions,
+                        entrancePositions,
+                        reserveDeskPosition,
+                        minServiceTime: location.state.settings.minServiceTime,
+                        maxServiceTime: location.state.settings.maxServiceTime,
+                        maxClientNumber: location.state.settings.maxClientNumber,
+                        stationWidth: parseInt(location.state.settings.mapWidth),
+                        stationHeight: parseInt(location.state.settings.mapHeight),
+                        clientGenerator: {
+                            generatorType: (location.state.selectedStrategy as string).toLowerCase()
+                        },
+                    }),
+                });
+
                 await fetch('http://localhost:8080/simulation/trainStation', {
                     method: "POST"
                 });
@@ -260,7 +261,7 @@ export const ConstructorMap = () => {
         } else if (itemType === DRAG_TYPES.ENTRANCE) {
             setEntrancePositions((prev) => [...prev, { x, y }]);
         } else if (itemType === DRAG_TYPES.RESERVED_DESK) {
-            setReservedDeskPosition({ x, y });
+            setReserveDeskPosition({ x, y });
         }
 
         setItemCounts((prev) => ({
@@ -325,13 +326,16 @@ export const ConstructorMap = () => {
                         </div>
                     )}
                 </header>
-                <RedRectanglesRow
-                    currentDragType={currentDragType}
-                    dragType={[DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK]}
-                    columnCount={20}
-                    availableColumns={availableColumns}
-                    onDrop={handleDrop}
-                />
+                <div className="drop-area">
+                    <RedRectanglesRow
+                        currentDragType={currentDragType}
+                        dragType={[DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK]}
+                        columnCount={20}
+                        availableColumns={availableColumns}
+                        onDrop={handleDrop}
+                        gridHeight={parseInt(location.state.settings.mapHeight)}
+                    />
+                </div>
                 <div className="grid-container">
                     {grid.map((row, y) =>
                         row.map((cell, x) => {
@@ -355,6 +359,7 @@ export const ConstructorMap = () => {
                     currentDragType={currentDragType}
                     dragType={DRAG_TYPES.ENTRANCE}
                     columnCount={20}
+                    gridHeight={parseInt(location.state.settings.mapHeight)}
                     availableColumns={availableEntranceColumns}
                     onDrop={handleDrop}
                 />

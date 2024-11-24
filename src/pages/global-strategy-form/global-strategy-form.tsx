@@ -10,7 +10,7 @@ const BackIcon = () => (
 );
 
 type FieldName = 'mapWidth' | 'mapHeight' | 'desks' | 'entrances' | 
-                'minServiceTime' | 'maxServiceTime' | 'maxClients';
+    'minServiceTime' | 'maxServiceTime' | 'maxClientNumber';
 
 // interface Settings {
 //     mapWidth: string;
@@ -28,13 +28,13 @@ export const GlobalStrategyForm: React.FC = () => {
     const navigate = useNavigate();
 
     const [settings, setSettings] = useState({
-        mapWidth: '20',          // Valid: between 5 and 100
-        mapHeight: '30',         // Valid: between 5 and 100
+        mapWidth: '10',          // Valid: between 5 and 100
+        mapHeight: '10',         // Valid: between 5 and 100
         desks: '5',             // Valid: between 1 and 20
         entrances: '2',         // Valid: between 1 and 10
-        minServiceTime: '5',    // Valid: >= 1 and < maxServiceTime
-        maxServiceTime: '15',   // Valid: > minServiceTime and <= 60
-        maxClients: '5000'      // Valid: between 1 and 10000
+        minServiceTime: '4000',    // Valid: >= 1 and < maxServiceTime
+        maxServiceTime: '5000',   // Valid: > minServiceTime and <= 60
+        maxClientNumber: '10'      // Valid: between 1 and 10000
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
@@ -45,7 +45,7 @@ export const GlobalStrategyForm: React.FC = () => {
         entrances: false,
         minServiceTime: false,
         maxServiceTime: false,
-        maxClients: false
+        maxClientNumber: false
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -92,10 +92,9 @@ export const GlobalStrategyForm: React.FC = () => {
                 if (!value.trim()) return 'Maximum service time is required';
                 if (isNaN(numberValue)) return 'Must be a number';
                 if (numberValue < Number(settings.minServiceTime)) return 'Must be greater than min service time';
-                if (numberValue > 60) return 'Maximum time is 60 minutes';
                 break;
             
-            case 'maxClients':
+            case 'maxClientNumber':
                 if (!value.trim()) return 'Maximum clients is required';
                 if (isNaN(numberValue)) return 'Must be a number';
                 if (numberValue < 1) return 'Minimum 1 client required';
@@ -155,10 +154,17 @@ export const GlobalStrategyForm: React.FC = () => {
                 minServiceTime: Number(settings.minServiceTime),
                 maxServiceTime: Number(settings.maxServiceTime),
                 clientGenerator: { generatorType: "default" },
-                maxClientNumber: Number(settings.maxClients),
+                maxClientNumber: Number(settings.maxClientNumber),
                 stationWidth: Number(settings.mapWidth),
                 stationHeight: Number(settings.mapHeight),
             };
+
+
+            navigate("/choose-strategy-page", {
+                state: {
+                    settings
+                }
+            });
         } else {
             setErrors(formErrors);
             const allTouched = Object.keys(touched).reduce(
@@ -312,14 +318,14 @@ export const GlobalStrategyForm: React.FC = () => {
                                 <input
                                     type="text"
                                     name="maxClients"
-                                    value={settings.maxClients}
+                                    value={settings.maxClientNumber}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    className={getInputStyle('maxClients')}
-                                    aria-invalid={shouldShowError('maxClients')}
+                                    className={getInputStyle('maxClientNumber')}
+                                    aria-invalid={shouldShowError('maxClientNumber')}
                                 />
-                                {shouldShowError('maxClients') && 
-                                    <div className="error-message">{errors.maxClients}</div>
+                                {shouldShowError('maxClientNumber') && 
+                                    <div className="error-message">{errors.maxClientNumber}</div>
                                 }
                             </div>
                         </div>
