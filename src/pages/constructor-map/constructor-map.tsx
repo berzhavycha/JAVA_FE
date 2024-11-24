@@ -287,45 +287,49 @@ export const ConstructorMap = () => {
         <DndProvider backend={HTML5Backend}>
             <div className="map-container">
                 <header className="map-header">
-                    {isSimulationStarted ?
-                        <Timer /> :
-                        <h1 className="map-title">Construct your map</h1>
-                    }
-                    {!isSimulationStarted && <div className="controls">
-                        <DraggableItem
-                            id={1}
-                            type={DRAG_TYPES.DESK}
-                            icon={<img src={DeskImage} />}
-                            label={'Desk'}
-                            onDragStart={setCurrentDragType}
-                            count={itemCounts[DRAG_TYPES.DESK]}
-                        />
-                        <DraggableItem
-                            id={2}
-                            type={DRAG_TYPES.RESERVED_DESK}
-                            icon={<img src={DeskImage} />}
-                            label={'Reserved Desk'}
-                            onDragStart={setCurrentDragType}
-                            count={itemCounts[DRAG_TYPES.RESERVED_DESK]}
-                        />
-                        <DraggableItem
-                            id={3}
-                            type={DRAG_TYPES.ENTRANCE}
-                            icon={<img src={EntranceImage} />}
-                            label={'Entrance'}
-                            onDragStart={setCurrentDragType}
-                            count={itemCounts[DRAG_TYPES.ENTRANCE]}
-                        />
-                    </div>}
-                    <button className="start-button" onClick={isSimulationStarted ? stopSimulation : startSimulation}>
-                        {isSimulationStarted ? 'Stop' : 'Start'} Simulation
-                    </button>
-                    <button className="start-button" onClick={showLogs}>{!isLogsShown ? 'Show' : 'Close'} Logs</button>
-                    {isLogsShown && (
-                        <div className="log-list">
-                            <LogList logs={logs} />
-                        </div>
-                    )}
+                    <div className="left">
+                        {isSimulationStarted ?
+                            <Timer /> :
+                            <h1 className="map-title">Construct your map</h1>
+                        }
+                        {!isSimulationStarted && <div className="controls">
+                            <DraggableItem
+                                id={1}
+                                type={DRAG_TYPES.DESK}
+                                icon={<img src={DeskImage} />}
+                                label={'Desk'}
+                                onDragStart={setCurrentDragType}
+                                count={itemCounts[DRAG_TYPES.DESK]}
+                            />
+                            <DraggableItem
+                                id={2}
+                                type={DRAG_TYPES.RESERVED_DESK}
+                                icon={<img src={DeskImage} />}
+                                label={'Reserved Desk'}
+                                onDragStart={setCurrentDragType}
+                                count={itemCounts[DRAG_TYPES.RESERVED_DESK]}
+                            />
+                            <DraggableItem
+                                id={3}
+                                type={DRAG_TYPES.ENTRANCE}
+                                icon={<img src={EntranceImage} />}
+                                label={'Entrance'}
+                                onDragStart={setCurrentDragType}
+                                count={itemCounts[DRAG_TYPES.ENTRANCE]}
+                            />
+                        </div>}
+                    </div>
+                    <div className="right">
+                        <button className="start-button" onClick={isSimulationStarted ? stopSimulation : startSimulation}>
+                            {isSimulationStarted ? 'Stop' : 'Start'} Simulation
+                        </button>
+                        <button className="start-button" onClick={showLogs}>{!isLogsShown ? 'Show' : 'Close'} Logs</button>
+                        {isLogsShown && (
+                            <div className="log-list">
+                                <LogList logs={logs} />
+                            </div>
+                        )}
+                    </div>
                 </header>
                 <div className="drop-area">
                     <RedRectanglesRow

@@ -317,7 +317,7 @@ export const GlobalStrategyForm: React.FC = () => {
                             <div className="input-wrapper">
                                 <input
                                     type="text"
-                                    name="maxClients"
+                                    name="maxClientNumber"
                                     value={settings.maxClientNumber}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
