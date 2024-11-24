@@ -12,9 +12,6 @@ import { DRAG_TYPES, GridCell } from "./components/grid-cell";
 import { RedRectanglesRow } from "./components/red-rectangle-row";
 import { Timer } from "./components/timer";
 
-
-
-
 const SOCKET_URL = "http://localhost:8082";
 
 type Client = {
@@ -81,9 +78,7 @@ export const ConstructorMap = () => {
     const [deskPositions, setDeskPositions] = useState<{ x: number; y: number }[]>([]);
     const [entrancePositions, setEntrancePositions] = useState<{ x: number; y: number }[]>([]);
     const [reserveDeskPosition, setReserveDeskPosition] = useState<{ x: number; y: number } | null>(null);
-    const [unavailableColumns, setUnavailableColumns] = useState<number[]>([]);
 
-    console.log(location.state.settings)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -193,7 +188,7 @@ export const ConstructorMap = () => {
     useEffect(() => {
         const calculateGridDimensions = () => {
             const containerWidth = document.querySelector('.map-container')?.clientWidth || 0;
-            const maxGridWidth = Math.min(containerWidth - 64, 1200); // 64px for padding, max width 1200px
+            const maxGridWidth = Math.min(containerWidth - 64, 1200); 
             const cellSize = Math.floor(maxGridWidth / mapWidth);
             
             setGridDimensions({
@@ -201,20 +196,10 @@ export const ConstructorMap = () => {
                 height: cellSize * mapHeight
             });
             
-            // Update CSS variables
             document.documentElement.style.setProperty("--cell-size", `${cellSize}px`);
             document.documentElement.style.setProperty("--map-width", `${mapWidth}`);
             document.documentElement.style.setProperty("--map-height", `${mapHeight}`);
         };
-
-        const generateRandomUnavailableColumns = (totalColumns: number, count: number): number[] => {
-            const columns = Array.from({ length: totalColumns }, (_, i) => i);
-            const shuffled = columns.sort(() => Math.random() - 0.5);
-            return shuffled.slice(0, count);
-        };
-
-        const randomUnavailable = generateRandomUnavailableColumns(mapWidth, 2); 
-        setUnavailableColumns(randomUnavailable);
 
         calculateGridDimensions();
         window.addEventListener('resize', calculateGridDimensions);
@@ -279,19 +264,6 @@ export const ConstructorMap = () => {
         document.documentElement.style.setProperty("--map-height", `${mapWidth}`);
     }, [mapWidth, mapHeight]);
 
-    const generateAvailableColumns = (width: number, skip: number[]) => {
-        const skipSet = new Set(skip);
-        return Array.from({ length: width }, (_, index) =>
-            skipSet.has(index) ? null : index
-        ).filter((x): x is number => x !== null);
-    };
-
-    const unavailableColumnsCopy = [...unavailableColumns];
-    const availableColumns = generateAvailableColumns(mapWidth, unavailableColumnsCopy);
-    const availableEntranceColumns = generateAvailableColumns(mapWidth, unavailableColumnsCopy);
-    console.log(availableEntranceColumns)
-
-
     const handleDrop = (itemType: string, x: number, y: number) => {
         if (itemType === DRAG_TYPES.DESK) {
             setDeskPositions((prev) => [...prev, { x, y }]);
@@ -321,8 +293,6 @@ export const ConstructorMap = () => {
         fetchLogs();
         setIsLogShown(prev => !prev)
     }
-
-    console.log(currentDragType)
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -374,9 +344,9 @@ export const ConstructorMap = () => {
                             currentDragType={currentDragType}
                             dragType={[DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK]}
                             columnCount={mapWidth}
-                            availableColumns={availableColumns}
                             onDrop={handleDrop}
                             gridHeight={mapHeight}
+                            isTopRow
                         />
                     </div>
                     
@@ -414,7 +384,6 @@ export const ConstructorMap = () => {
                         dragType={DRAG_TYPES.ENTRANCE}
                         columnCount={mapWidth}
                         gridHeight={mapHeight}
-                        availableColumns={availableEntranceColumns}
                         onDrop={handleDrop}
                     />
                 </div>

@@ -45,13 +45,15 @@ export const GridCell: React.FC<Props> = ({
                 onDrop(draggedItem, x, y);
             }
         },
-        collect: (monitor) => ({
+        collect: (monitor) => {
+            return ({
             isOver: !!monitor.isOver(),
             canDrop:
                 !!monitor.canDrop() &&
                 monitor.getItem() !== null &&
                 monitor.getItem().type === currentDragType,
-        }),
+        })
+    },
     }));
 
     const showLabel = isBroken || item?.type === DRAG_TYPES.RESERVED_DESK;
