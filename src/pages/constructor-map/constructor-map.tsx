@@ -4,7 +4,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "./constructor-map.css";
 import DeskImage from '../../assets/information-desk 2.png';
 import EntranceImage from '../../assets/Entrance.png';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LogList from "../../components/log-list/log-list";
 import { Socket, connect } from "socket.io-client";
 import { DraggableItem } from "./components/draggable-item";
@@ -86,6 +86,7 @@ export const ConstructorMap = () => {
     const [reserveDeskPosition, setReserveDeskPosition] = useState<{ x: number; y: number }>(null);
 
     console.log(location.state.settings)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const socketInstance = connect(SOCKET_URL);
@@ -241,6 +242,8 @@ export const ConstructorMap = () => {
         if (socket) {
             console.log("Emitting stop_simulation event");
             socket.emit("stop_simulation");
+            navigate('/result-page')
+
             setIsSimulationStarted(false);
         }
     };
