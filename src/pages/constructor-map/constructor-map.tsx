@@ -133,7 +133,7 @@ export const ConstructorMap = () => {
                         stationWidth:  location.state.settings.maxWidth,
                         stationHeight:  location.state.settings.maxHeight,
                         clientGenerator: {
-                            generatorType: location.state.settings.selectedStrategy
+                            generatorType: (location.state.settings.selectedStrategy as string).toLowerCase()
                         },
                     }),
                 });
