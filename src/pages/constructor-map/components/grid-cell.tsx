@@ -1,5 +1,5 @@
 import { useDrop } from "react-dnd";
-import { DRAG_TYPES } from "../constructor-map";
+import { CLIENT_TYPE, DRAG_TYPES } from "../constructor-map";
 import { FC } from "react";
 import DeskImage from '../../../assets/information-desk 2.png';
 import EntranceImage from '../../../assets/Entrance.png';
@@ -9,17 +9,23 @@ type Props = {
     currentDragType: string;
     x: number;
     y: number;
-    onDrop: (draggedItem: unknown, x: number, y: number) => void;
+    onDrop?: (draggedItem: unknown, x: number, y: number) => void;
     item: any;
     placedItem?: any;
     className?: string;
+}
+
+const PersonColorMapper = {
+    [CLIENT_TYPE.SOLDIER]: 'green',
+    [CLIENT_TYPE.STUDENT]: 'yellow',
+    [CLIENT_TYPE.WITH_CHILD]: 'blue',
 }
 
 export const GridCell: FC<Props> = ({ currentDragType, x, y, onDrop, item, className, placedItem }) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK, DRAG_TYPES.ENTRANCE],
         drop: (draggedItem) => {
-            if (draggedItem) {
+            if (draggedItem && onDrop) {
                 onDrop(draggedItem, x, y);
             }
         },
@@ -31,6 +37,7 @@ export const GridCell: FC<Props> = ({ currentDragType, x, y, onDrop, item, class
         },
     }));
 
+    const image = 
 
     return (
         <div

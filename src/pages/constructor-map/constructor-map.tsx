@@ -18,6 +18,7 @@ export const DRAG_TYPES = {
     ENTRANCE: "entrance",
 };
 
+
 const SOCKET_URL = "http://localhost:8082";
 
 type Client = {
@@ -61,6 +62,12 @@ type TrainSimulationResponse = {
     maxPeopleCount: number;
 }
 
+export enum CLIENT_TYPE {
+    SOLDIER = '_soldier',
+    STUDENT = '_student',
+    WITH_CHILD = '_withChild'
+}
+
 export const ConstructorMap = () => {
     const [currentDragType, setCurrentDragType] = useState("");
     const location = useLocation();
@@ -83,7 +90,7 @@ export const ConstructorMap = () => {
 
     const [deskPositions, setDeskPositions] = useState<{ x: number; y: number }[]>([]);
     const [entrancePositions, setEntrancePositions] = useState<{ x: number; y: number }[]>([]);
-    const [reserveDeskPosition, setReserveDeskPosition] = useState<{ x: number; y: number }>(null);
+    const [reserveDeskPosition, setReserveDeskPosition] = useState<{ x: number; y: number } | null>(null);
 
     console.log(location.state.settings)
     const navigate = useNavigate()
@@ -371,7 +378,6 @@ export const ConstructorMap = () => {
                                         x={x}
                                         y={y}
                                         currentDragType={currentDragType}
-                                        onDrop={handleDrop}
                                         item={cell}
                                         placedItem={isManHere}
                                         className="grid-cell"
