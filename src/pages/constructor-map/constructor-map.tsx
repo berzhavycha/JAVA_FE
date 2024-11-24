@@ -403,6 +403,7 @@ export const ConstructorMap = () => {
                                         item={cell}
                                         placedItem={client}
                                         className="grid-cell"
+                                        isBroken={cell?.broken}
                                     />
                                 );
                             })

@@ -1,5 +1,5 @@
-import { useDrop } from "react-dnd";
-import { FC } from "react";
+import React from 'react';
+import { useDrop } from 'react-dnd';
 import DeskImage from "../../../assets/information-desk 2.png";
 import EntranceImage from "../../../assets/Entrance.png";
 import { PersonIcon } from "../../../components/person-icon/person-icon";
@@ -12,6 +12,7 @@ type Props = {
     item: any;
     placedItem?: any;
     className?: string;
+    isBroken?: boolean;
 };
 
 export const DRAG_TYPES = {
@@ -20,21 +21,12 @@ export const DRAG_TYPES = {
     ENTRANCE: "entrance",
 };
 
-export enum CLIENT_TYPE {
-    SOLDIER = "_soldier",
-    STUDENT = "_student",
-    WITH_CHILD = "_withChild",
-    DISABLED = "_disabled",
-}
-
-const parseClientTypes = (type: string): CLIENT_TYPE[] => {
-    const parts = type
-        .split("_")
-        .slice(1); 
-    return parts.map((part) => `_${part}` as CLIENT_TYPE);
+const parseClientTypes = (type: string) => {
+    const parts = type.split("_").slice(1);
+    return parts.map((part) => `_${part}`);
 };
 
-export const GridCell: FC<Props> = ({
+export const GridCell: React.FC<Props> = ({
     currentDragType,
     x,
     y,
@@ -42,6 +34,7 @@ export const GridCell: FC<Props> = ({
     item,
     className,
     placedItem,
+    isBroken,
 }) => {
     const [{ isOver, canDrop }, drop] = useDrop(() => ({
         accept: [DRAG_TYPES.DESK, DRAG_TYPES.RESERVED_DESK, DRAG_TYPES.ENTRANCE],
@@ -59,21 +52,37 @@ export const GridCell: FC<Props> = ({
         }),
     }));
 
+    const isDesk = item && (item.type === DRAG_TYPES.DESK || item.type === DRAG_TYPES.RESERVED_DESK);
+
     return (
         <div
             ref={drop}
-            className={`grid-cell ${isOver ? "hovered" : ""} ${canDrop ? "droppable" : ""
-                } ${className}`}
+            className={`grid-cell ${isOver ? "hovered" : ""} ${canDrop ? "droppable" : ""} ${className}`}
         >
+            {isDesk && (
+                <div
+                    className="desk-label"
+                    style={{
+                        color: isBroken ? 'red' : 'green',
+                        fontSize: 'calc(var(--cell-size) * 0.15)', 
+                        fontWeight: `calc(200 + (var(--cell-size) * 0.1))`,
+                    }}
+                >
+                    {isBroken ? 'Broken' : 'Operational'}
+                </div>
+            )}
             {item && (
                 <img
                     src={
-                        item.type === DRAG_TYPES.DESK ||
-                            item.type === DRAG_TYPES.RESERVED_DESK
+                        isDesk
                             ? DeskImage
                             : EntranceImage
                     }
                     alt={item.type}
+                    style={{
+                        width: '80%',
+                        height: 'auto',
+                    }}
                 />
             )}
             {placedItem && (

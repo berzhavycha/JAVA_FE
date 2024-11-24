@@ -93,14 +93,13 @@
 } 
 
 .grid-cell {
-    width: 100%;
-    height: 100%;
-    background-color: #F7F3DB;
-    border: 1px solid #aaa;
-    position: relative;
+    width: var(--cell-size);
+    height: var(--cell-size);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .grid-cell.desk-grid-cell {
@@ -298,4 +297,18 @@
 .entrance-block {
     width: var(--cell-size);
     height: 100%;
+}
+
+.desk-label {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2px 4px;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 999;
 }
