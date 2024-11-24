@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { GridCell } from "./grid-cell";
-import { DRAG_TYPES } from "../constructor-map";
+import { DRAG_TYPES, GridCell } from "./grid-cell";
 
 export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availableColumns, onDrop }: {
     currentDragType: string,

@@ -1,5 +1,4 @@
 import { useDrop } from "react-dnd";
-import { CLIENT_TYPE, DRAG_TYPES } from "../constructor-map";
 import { FC } from "react";
 import DeskImage from '../../../assets/information-desk 2.png';
 import EntranceImage from '../../../assets/Entrance.png';
@@ -13,6 +12,19 @@ type Props = {
     item: any;
     placedItem?: any;
     className?: string;
+}
+
+export const DRAG_TYPES = {
+    DESK: "desk",
+    RESERVED_DESK: "reserved_desk",
+    ENTRANCE: "entrance",
+};
+
+export enum CLIENT_TYPE {
+    SOLDIER = '_soldier',
+    STUDENT = '_student',
+    WITH_CHILD = '_withChild',
+    DISABLED = '_disabled'
 }
 
 const PersonColorMapper = {

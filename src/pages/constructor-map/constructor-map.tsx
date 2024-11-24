@@ -8,15 +8,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import LogList from "../../components/log-list/log-list";
 import { Socket, connect } from "socket.io-client";
 import { DraggableItem } from "./components/draggable-item";
-import { GridCell } from "./components/grid-cell";
+import { DRAG_TYPES, GridCell } from "./components/grid-cell";
 import { RedRectanglesRow } from "./components/red-rectangle-row";
 import { Timer } from "./components/timer";
 
-export const DRAG_TYPES = {
-    DESK: "desk",
-    RESERVED_DESK: "reserved_desk",
-    ENTRANCE: "entrance",
-};
+
 
 
 const SOCKET_URL = "http://localhost:8082";
@@ -60,13 +56,6 @@ type TrainSimulationResponse = {
     entrances: Entrance[],
     buildingMap: BuildingMap;
     maxPeopleCount: number;
-}
-
-export enum CLIENT_TYPE {
-    SOLDIER = '_soldier',
-    STUDENT = '_student',
-    WITH_CHILD = '_withChild',
-    DISABLED = '_disabled'
 }
 
 export const ConstructorMap = () => {
