@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DRAG_TYPES, GridCell } from "./grid-cell";
 
-export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availableColumns, onDrop }: {
+export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availableColumns, columnCount, onDrop }: {
     currentDragType: string,
     gridHeight: number,
     dragType: string | string[],
@@ -9,7 +9,7 @@ export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availa
     availableColumns: number[];
     onDrop: (type: string, x: number, y: number) => void;
 }) => {
-    const [grid, setGrid] = useState(Array.from({ length: 20 }, () => Array(20).fill(null)));
+    const [grid, setGrid] = useState(Array.from({ length: 20 }, () => Array(columnCount).fill(null)));
 
     const handleDrop = (item, x) => {
         setGrid((prevGrid) => {
@@ -18,8 +18,11 @@ export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availa
             return newGrid;
         });
 
+        console.log('call')
+
         onDrop(item.type, x, dragType === DRAG_TYPES.ENTRANCE ? gridHeight : 1);
     };
+
 
     return (
         <>
@@ -32,7 +35,11 @@ export const RedRectanglesRow = ({ currentDragType, dragType, gridHeight, availa
                             key={`${x}`}
                             x={x}
                             y={currentDragType === DRAG_TYPES.ENTRANCE ? gridHeight : 1}
-                            onDrop={handleDrop}
+                            onDrop={(item, x, currentType = 'optional', type = 'optional') => {
+                                if(Array.isArray(dragType) && dragType.includes(currentDragType) || dragType === currentDragType) {
+                                    handleDrop(item, x)
+                                }
+                            }}
                             item={cell}
                             className={`desk-grid-cell`}
                         />

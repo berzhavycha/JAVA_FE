@@ -81,6 +81,7 @@ export const ConstructorMap = () => {
     const [deskPositions, setDeskPositions] = useState<{ x: number; y: number }[]>([]);
     const [entrancePositions, setEntrancePositions] = useState<{ x: number; y: number }[]>([]);
     const [reserveDeskPosition, setReserveDeskPosition] = useState<{ x: number; y: number } | null>(null);
+    const [unavailableColumns, setUnavailableColumns] = useState<number[]>([]);
 
     console.log(location.state.settings)
     const navigate = useNavigate()
@@ -206,6 +207,15 @@ export const ConstructorMap = () => {
             document.documentElement.style.setProperty("--map-height", `${mapHeight}`);
         };
 
+        const generateRandomUnavailableColumns = (totalColumns: number, count: number): number[] => {
+            const columns = Array.from({ length: totalColumns }, (_, i) => i);
+            const shuffled = columns.sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        };
+
+        const randomUnavailable = generateRandomUnavailableColumns(mapWidth, 2); 
+        setUnavailableColumns(randomUnavailable);
+
         calculateGridDimensions();
         window.addEventListener('resize', calculateGridDimensions);
         
@@ -270,13 +280,18 @@ export const ConstructorMap = () => {
     }, [mapWidth, mapHeight]);
 
     const generateAvailableColumns = (width: number, skip: number[]) => {
+        const skipSet = new Set(skip); // Optimize lookup
         return Array.from({ length: width }, (_, index) =>
-            skip.includes(index) ? null : index
-        ).filter((x) => x !== null);
+            skipSet.has(index) ? null : index
+        ).filter((x): x is number => x !== null); // Ensure no null values
     };
 
-    const availableColumns = generateAvailableColumns(mapWidth, [5, 6]);
-    const availableEntranceColumns = generateAvailableColumns(mapWidth, [5, 6]);
+
+    const unavailableColumnsCopy = [...unavailableColumns];
+    const availableColumns = generateAvailableColumns(mapWidth, unavailableColumnsCopy);
+    const availableEntranceColumns = generateAvailableColumns(mapWidth, unavailableColumnsCopy);
+    console.log(availableEntranceColumns)
+
 
     const handleDrop = (itemType: string, x: number, y: number) => {
         if (itemType === DRAG_TYPES.DESK) {
@@ -308,6 +323,8 @@ export const ConstructorMap = () => {
         setIsLogShown(prev => !prev)
     }
 
+    console.log(currentDragType)
+
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="map-container">
@@ -322,7 +339,7 @@ export const ConstructorMap = () => {
                             type={DRAG_TYPES.DESK}
                             icon={<img src={DeskImage} />}
                             label={'Desk'}
-                            onDragStart={setCurrentDragType}
+                            onDragStart={() => setCurrentDragType(DRAG_TYPES.DESK)}
                             count={itemCounts[DRAG_TYPES.DESK]}
                         />
                         <DraggableItem
@@ -338,7 +355,7 @@ export const ConstructorMap = () => {
                             type={DRAG_TYPES.ENTRANCE}
                             icon={<img src={EntranceImage} />}
                             label={'Entrance'}
-                            onDragStart={setCurrentDragType}
+                            onDragStart={() => setCurrentDragType(DRAG_TYPES.ENTRANCE)}
                             count={itemCounts[DRAG_TYPES.ENTRANCE]}
                         />
                     </div>}

@@ -25,7 +25,6 @@ export const DraggableItem: FC<Props> = ({ id, type, icon, label, onDragStart, c
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
-        end: () => onDragStart(""),
     }));
 
     return (
