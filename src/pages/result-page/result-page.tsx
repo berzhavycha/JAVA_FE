@@ -36,6 +36,7 @@ const ResultsPage = () => {
         navigate('/');
     };
 
+
     if (loading) {
         return <div className="resultsPage-container">Loading...</div>;
     }
@@ -43,6 +44,7 @@ const ResultsPage = () => {
     if (error) {
         return <div className="resultsPage-container">Error: {error}</div>;
     }
+
 
     return (
         <div className="resultsPage-container">

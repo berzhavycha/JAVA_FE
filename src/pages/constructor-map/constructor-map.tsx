@@ -377,7 +377,6 @@ export const ConstructorMap = () => {
                                     (pos) => pos.position.x === (x + 1) && pos.position.y === (y + 1)
                                 );
 
-
                                 return (
                                     <GridCell
                                         key={`${y}-${x}`}
