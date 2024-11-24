@@ -5,12 +5,13 @@ import '../constructor-map.css'
 type Props = {
     id: number;
     type: string;
-    label :any;
+    label: any;
+    icon: any;
     onDragStart: (type: string) => void;
     count: number
 }
 
-export const DraggableItem: FC<Props> = ({ id, type, label, onDragStart, count }) => {
+export const DraggableItem: FC<Props> = ({ id, type, icon, label, onDragStart, count }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
         type,
         item: () => {
@@ -38,7 +39,8 @@ export const DraggableItem: FC<Props> = ({ id, type, label, onDragStart, count }
                     pointerEvents: count > 0 ? "auto" : "none",
                 }}
             >
-                {label}
+                {icon}
+                <span className="item-label">{label}</span>
                 <span className="item-counter">{count}</span>
             </div>
         </div>

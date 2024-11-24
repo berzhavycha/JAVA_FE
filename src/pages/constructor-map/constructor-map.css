@@ -149,6 +149,17 @@
     display: inline-block;
 }
 
+.item-label {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 .item-counter {
     position: absolute;
     top: -8px;

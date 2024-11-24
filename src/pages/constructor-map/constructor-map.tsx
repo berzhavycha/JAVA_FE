@@ -189,8 +189,6 @@ export const ConstructorMap = () => {
         }
     }, [trainSimulation]);
 
-    console.log(location.state)
-
     const startSimulation = async () => {
         try {
 
@@ -297,21 +295,24 @@ export const ConstructorMap = () => {
                         <DraggableItem
                             id={1}
                             type={DRAG_TYPES.DESK}
-                            label={<img src={DeskImage} />}
+                            icon={<img src={DeskImage} />}
+                            label={'Desk'}
                             onDragStart={setCurrentDragType}
                             count={itemCounts[DRAG_TYPES.DESK]}
                         />
                         <DraggableItem
                             id={2}
                             type={DRAG_TYPES.RESERVED_DESK}
-                            label={<img src={DeskImage} />}
+                            icon={<img src={DeskImage} />}
+                            label={'Reserved Desk'}
                             onDragStart={setCurrentDragType}
                             count={itemCounts[DRAG_TYPES.RESERVED_DESK]}
                         />
                         <DraggableItem
                             id={3}
                             type={DRAG_TYPES.ENTRANCE}
-                            label={<img src={EntranceImage} />}
+                            icon={<img src={EntranceImage} />}
+                            label={'Entrance'}
                             onDragStart={setCurrentDragType}
                             count={itemCounts[DRAG_TYPES.ENTRANCE]}
                         />
