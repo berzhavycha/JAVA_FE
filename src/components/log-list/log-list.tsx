@@ -13,10 +13,16 @@ interface LoggingProps {
   logs: LogEntry[];
 }
 
-const formatTime = (timestamp: number) => {
-  const date = new Date(timestamp);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+const formatTime = (milliseconds: number) => {
+  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+  const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+
+  const pad = (num: number) => String(num).padStart(2, '0');
+
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 };
+
 
 const LogList: React.FC<LoggingProps> = ({ logs }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
