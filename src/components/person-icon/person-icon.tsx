@@ -8,21 +8,49 @@ export enum CLIENT_TYPE {
 }
 
 const PersonColorMapper: Record<string, string> = {
-    [CLIENT_TYPE.SOLDIER]: "green",
-    [CLIENT_TYPE.STUDENT]: "yellow",
-    [CLIENT_TYPE.WITH_CHILD]: "blue",
-    [CLIENT_TYPE.DISABLED]: "red",
+    [CLIENT_TYPE.SOLDIER]: "#4CAF50",    
+    [CLIENT_TYPE.STUDENT]: "#FFC107",  
+    [CLIENT_TYPE.WITH_CHILD]: "#2196F3",  
+    [CLIENT_TYPE.DISABLED]: "#F44336",   
 };
 
-const generateGradientId = (types: string[]): string => types.sort().join("-");
+const DEFAULT_COLOR = "#757575"; 
+
+const generateGradientId = (types: string[]): string => 
+    `person-gradient-${types.sort().join("-")}`;
+
+const getValidColors = (types: string[]): string[] => {
+    const validColors = types
+        .map(type => PersonColorMapper[type])
+        .filter(color => !!color);
+
+    return validColors.length > 0 ? validColors : [DEFAULT_COLOR];
+};
 
 type Props = {
     types: string[];
 };
 
 export const PersonIcon: FC<Props> = ({ types }) => {
-    const colors = types.map((type) => PersonColorMapper[type]);
+    const colors = getValidColors(types);
     const gradientId = generateGradientId(types);
+
+    const generateStops = (colors: string[]) => {
+        if (colors.length === 1) {
+            return [
+                <stop key="0" offset="0%" stopColor={colors[0]} />,
+                <stop key="1" offset="100%" stopColor={colors[0]} />
+            ];
+        }
+
+        return colors.map((color, index) => (
+            <stop
+                key={index}
+                offset={`${(index / (colors.length - 1)) * 100}%`}
+                stopColor={color}
+            />
+        ));
+    };
 
     return (
         <svg
@@ -36,20 +64,21 @@ export const PersonIcon: FC<Props> = ({ types }) => {
             xmlSpace="preserve"
         >
             <defs>
-                <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-                    {colors.map((color, index) => (
-                        <stop
-                            key={index}
-                            offset={colors.length === 1 ? "0%" : `${(index / (colors.length - 1)) * 100}%`}
-                            stopColor={color}
-                        />
-                    ))}
+                <linearGradient 
+                    id={gradientId} 
+                    x1="0%" 
+                    y1="0%" 
+                    x2="100%" 
+                    y2="0%"
+                    gradientUnits="userSpaceOnUse"
+                >
+                    {generateStops(colors)}
                 </linearGradient>
             </defs>
             <g>
                 <path
                     d="M52.65,125.2h19.9c3.3,0,6-2.7,6-6V86.301h3.399c3.301,0,6-2.701,6-6V43.2c0-3.3-2.699-6-6-6H43.25c-3.3,0-6,2.7-6,6
-          v37.101c0,3.299,2.7,6,6,6h3.4V119.2C46.65,122.5,49.25,125.2,52.65,125.2z"
+                    v37.101c0,3.299,2.7,6,6,6h3.4V119.2C46.65,122.5,49.25,125.2,52.65,125.2z"
                     fill={`url(#${gradientId})`}
                 />
                 <circle
