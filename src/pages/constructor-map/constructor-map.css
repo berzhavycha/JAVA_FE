@@ -1,11 +1,16 @@
 .map-header {
     position: sticky;
+    top: 0;
+    z-index: 50;
+    width: 100%;
+    background-color: #3C2020;
+    padding: 0.75rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #fff;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    gap: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .map-header .left {
@@ -22,33 +27,43 @@
 }
 
 .map-title {
-    text-transform: uppercase;
-    font-weight: 200;
-    font-size: 2rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #fff;
+    margin: 0;
+    white-space: nowrap;
 }
 
 .controls {
-    margin-top: 40px;
     display: flex;
-    gap: 4rem;
+    gap: 2rem;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0.5rem 0;
 }
 
 .start-button {
     background-color: #F7F3DB;
     color: #3b2814;
     border: none;
-    padding: 0.75rem 1.5rem;
+    padding: 0.625rem 1.25rem;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: 600;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    height: fit-content;
 }
 
 .start-button:hover {
     background-color: #ffb400;
+    transform: translateY(-1px);
 }
 
+.start-button:active {
+    transform: translateY(0);
+}
 
 .map-header {
     display: flex;
@@ -62,11 +77,6 @@
     background-color: #844B4B;
 }
 
-.draggable-item {
-    border-radius: 4px;
-    text-align: center;
-    font-size: 14px;
-}
 
 .grid-container {
     display: grid;
@@ -149,38 +159,60 @@
 
 .draggable-item-container {
     position: relative;
-    display: inline-block;
+    width: 100px;
+    cursor: grab;
 }
 
-.item-label {
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    width: 100%;
-    transform: translateX(-50%);
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
+.draggable-item .item-label {
+    color: #F7F3DB;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
 }
 
-.item-counter {
+.draggable-item .item-counter {
     position: absolute;
-    top: -8px;
-    right: -15px;
+    top: 0;
+    right: 0;
     background-color: #3b82f6;
     color: white;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 2px solid #3C2020;
+    transform: translate(25%, -25%);
 }
 
 .draggable-item {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.draggable-item:active {
+    cursor: grabbing;
+}
+
+.draggable-item:not(.disabled):hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.draggable-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
 .timer-container {
@@ -191,22 +223,22 @@
 
 .timer-box {
     background-color: #2d1b1b;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .timer-display {
     font-family: monospace;
-    font-size: 2rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    letter-spacing: 2px;
     color: #ffffff;
+    letter-spacing: 1px;
 }
 
 .milliseconds {
-    font-size: 1.5rem;
-    color: #888888;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .timer-box:hover {
@@ -217,7 +249,6 @@
 
 
 .map-container {
-    padding: 2rem;
     font-family: Arial, sans-serif;
     background-color: #3C2020;
     width: 100%;
@@ -263,11 +294,10 @@
 }
 
 .draggable-item img {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     object-fit: contain;
 }
-
 .red-rectangles-row {
     width: 100%;
     display: grid;
@@ -296,4 +326,25 @@
     border-radius: 4px;
     padding: 2px 4px;
     text-align: center;
+}
+
+@media (max-width: 768px) {
+    .map-header {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .controls {
+        gap: 1rem;
+    }
+
+    .map-title {
+        font-size: 1.25rem;
+    }
+
+    .draggable-item img {
+        width: 40px;
+        height: 40px;
+    }
 }
