@@ -337,7 +337,14 @@ export const ConstructorMap = () => {
                             count={itemCounts[DRAG_TYPES.ENTRANCE]}
                         />
                     </div>}
-                    <button className="start-button" onClick={isSimulationStarted ? stopSimulation : startSimulation}>
+                    <button
+                        className="start-button"
+                        onClick={isSimulationStarted ? stopSimulation : startSimulation}
+                        disabled={
+                            !isSimulationStarted &&
+                            (deskPositions.length === 0 || entrancePositions.length === 0 || !reserveDeskPosition)
+                        }
+                    >
                         {isSimulationStarted ? 'Stop' : 'Start'} Simulation
                     </button>
                     <button className="start-button" onClick={showLogs}>{!isLogsShown ? 'Show' : 'Close'} Logs</button>
