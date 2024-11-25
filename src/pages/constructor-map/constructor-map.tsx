@@ -94,6 +94,11 @@ export const ConstructorMap = () => {
                     },
                 }))
             );
+
+            trainSimulation.cashDesks.forEach(data => {
+                redRectanglesRowRef.current?.onStatusChangeDesk(data.position.x, data.broken);
+            })
+            
             setClients(updatedClients);
         }
     }, [trainSimulation]);
