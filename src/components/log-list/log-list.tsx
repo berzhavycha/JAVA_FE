@@ -39,6 +39,8 @@ const LogList: React.FC<LoggingProps> = ({ logs }) => {
           logs.map((log, index) => (
             <div key={index} className="log-entry">
               <div className="log-time">{formatTime(log.startTimeMs)}</div>
+              <span>-</span>
+              <div className="log-time">{formatTime(log.endTimeMs)}</div>
               <div className="log-message">
                 Passenger {log.clientId} has purchased {log.ticketCount} ticket(s) at desk {log.cashDeskId}
               </div>
