@@ -94,6 +94,7 @@
     border: 1px solid #aaa;
     position: relative;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
@@ -293,4 +294,13 @@
 .entrance-block {
     width: var(--cell-size);
     height: 100%;
+}
+
+.desk-label {
+    font-size: 12px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px 4px;
+    text-align: center;
 }
