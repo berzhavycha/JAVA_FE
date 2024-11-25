@@ -1,10 +1,5 @@
-.map-container {
-    padding: 2rem;
-    font-family: Arial, sans-serif;
-    background-color: #3C2020;
-}
-
 .map-header {
+    position: sticky;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -54,11 +49,6 @@
     background-color: #ffb400;
 }
 
-.map-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 
 .map-header {
     display: flex;
@@ -233,6 +223,9 @@
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .game-area {
